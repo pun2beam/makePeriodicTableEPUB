@@ -37,6 +37,11 @@ class Cell:
 
 
 LAN_START_COLUMN = 4
+LAN_ROW = 8
+ACT_ROW = 9
+# Additional vertical spacing (in cell heights) inserted before the lanthanide row
+# so that the lanthanides and actinides appear separated from the main table.
+LAN_GAP_FACTOR = 0.5
 
 
 def compute_position(element: Dict[str, Any]) -> Optional[tuple[int, int]]:
@@ -47,10 +52,10 @@ def compute_position(element: Dict[str, Any]) -> Optional[tuple[int, int]]:
         return period, group
     if 57 <= atomic_number <= 71:
         column = LAN_START_COLUMN + (atomic_number - 57)
-        return 8, column
+        return LAN_ROW, column
     if 89 <= atomic_number <= 103:
         column = LAN_START_COLUMN + (atomic_number - 89)
-        return 9, column
+        return ACT_ROW, column
     return None
 
 
@@ -58,6 +63,7 @@ def build_cells(elements: Iterable[Dict[str, Any]]) -> List[Cell]:
     cell_width = (LAYOUT_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / COLUMNS
     cell_height = (LAYOUT_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM) / ROWS
     cells: List[Cell] = []
+    gap = cell_height * LAN_GAP_FACTOR
     for element in elements:
         position = compute_position(element)
         if position is None:
@@ -65,6 +71,8 @@ def build_cells(elements: Iterable[Dict[str, Any]]) -> List[Cell]:
         row, column = position
         x = MARGIN_LEFT + (column - 1) * cell_width
         y = MARGIN_TOP + (row - 1) * cell_height
+        if row >= LAN_ROW:
+            y += gap
         cells.append(
             Cell(
                 atomic_number=element["atomic_number"],
