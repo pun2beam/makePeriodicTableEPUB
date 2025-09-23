@@ -15,9 +15,30 @@ from typing import Any, Dict, List
 from slugify import slugify
 
 
+def get_element_display_name(element: Dict[str, Any], language: str) -> str:
+    """Return the preferred display name for an element."""
+
+    lang = (language or "").lower()
+    if lang and lang != "en":
+        # Prefer localized names when the language is not English.
+        localized_name = element.get("name_local")
+        if localized_name:
+            return str(localized_name)
+    return str(
+        element.get("name_en")
+        or element.get("name_local")
+        or element.get("symbol")
+        or "Element"
+    )
+
 
 def render_element_page(element: Dict[str, object]) -> str:
-    name = element.get("name_en", "Unknown")
+    name = (
+        element.get("display_name")
+        or element.get("name_en")
+        or element.get("name_local")
+        or "Unknown"
+    )
     symbol = element.get("symbol", "?")
     title = f"{name} ({symbol})"
     description = element.get("description")
@@ -294,18 +315,27 @@ def main() -> int:
                 number = int(item.get("atomic_number"))
             except (TypeError, ValueError):
                 continue
-            slug_source = item.get("name_en") or item.get("symbol") or str(number)
+            display_name = get_element_display_name(item, language)
+            slug_source = (
+                item.get("name_en")
+                or item.get("name_local")
+                or item.get("symbol")
+                or str(number)
+            )
             slug_text = slugify(slug_source) or f"element-{number}"
             filename = f"{number:03d}-{slug_text}.xhtml"
             href = f"elements/{filename}"
-            title = f"{item.get('name_en', 'Element')} ({item.get('symbol', '?')})"
+            symbol = item.get("symbol", "?")
+            title = f"{display_name} ({symbol})"
+            element_data = dict(item)
+            element_data.setdefault("display_name", display_name)
             element_pages.append(
                 {
                     "id": f"element-{number:03d}",
                     "href": href,
                     "file": filename,
                     "title": title,
-                    "data": item,
+                    "data": element_data,
                     "number": number,
                 }
             )

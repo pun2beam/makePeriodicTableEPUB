@@ -187,7 +187,9 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
         if atomic_number is None:
             continue
         symbol = clean_text(row.get("symbol"))
-        name = clean_text(row.get("name_en")) or clean_text(row.get("name_local")) or symbol
+        name_en = clean_text(row.get("name_en"))
+        name_local = clean_text(row.get("name_local"))
+        name = name_en or name_local or symbol
         group = to_int(row.get("group"))
         period = to_int(row.get("period"))
         block_label = clean_text(row.get("block_label"))
@@ -216,7 +218,7 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
         phase = clean_text(row.get("phase"))
         origin = clean_text(row.get("origin"))
         wiki_url = ""
-        candidate_names = [clean_text(row.get("name_local")), clean_text(row.get("name_en")), symbol]
+        candidate_names = [name_local, name_en, symbol]
         for candidate in candidate_names:
             if candidate and candidate in link_index:
                 wiki_url = link_index[candidate]
@@ -228,7 +230,7 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
         record = {
             "atomic_number": atomic_number,
             "symbol": symbol,
-            "name_en": name,
+            "name_en": name_en or name_local or symbol,
             "group": group,
             "period": period,
             "block": block,
@@ -239,6 +241,8 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
             "origin": origin,
             "wiki_url": wiki_url,
         }
+        if name_local:
+            record["name_local"] = name_local
         records.append(record)
 
     records.sort(key=lambda r: r["atomic_number"])
