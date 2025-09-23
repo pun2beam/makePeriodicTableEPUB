@@ -25,12 +25,12 @@ pip install -r requirements.txt
    ```bash
    python scripts/normalize.py
    ```
-3. Fetch per-element summaries using the normalized table:
+3. Fetch per-element summaries using the normalized table and write them to a language-specific file:
    ```bash
-   python scripts/fetch_wiki.py --lang en --page "List of chemical elements" --elements-from data/tables.json
+   python scripts/fetch_wiki.py --lang en --page "List of chemical elements" --elements-from data/tables.json --elements-json data/elements.en.json
    ```
    This step downloads REST summaries for every element listed in `data/tables.json` and aggregates them into
-   `data/elements.json` (raw responses are saved under `data/raw/elements/`).
+   `data/elements.en.json` (raw responses are saved under `data/raw/elements/`).
 4. Build the cover SVG and rasterize it:
    ```bash
    python scripts/build_cover_svg.py
@@ -40,9 +40,9 @@ pip install -r requirements.txt
    ```bash
    python scripts/license_attribution.py
    ```
-6. Assemble the EPUB package:
+6. Assemble the EPUB package (pass the per-element summaries so the detailed pages are included):
    ```bash
-   python scripts/build_epub.py
+   python scripts/build_epub.py --element-data data/elements.en.json
    ```
 
 The final files are written to `book/dist/`:
