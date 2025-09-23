@@ -9,8 +9,22 @@
   </style>
   <rect x="0" y="0" width="{{ cover_width }}" height="{{ cover_height }}" fill="#ffffff"/>
   <g transform="translate({{ cover_width / 2 }}, {{ cover_height / 2 }}) rotate(-90) translate({{ -layout_width / 2 }}, {{ -layout_height / 2 }})">
-    <text x="{{ title_x }}" y="{{ title_y }}" class="title">PERIODIC TABLE</text>
-    <text x="{{ subtitle_x }}" y="{{ subtitle_y }}" class="subtitle">Reference Edition for Kindle</text>
+    <defs>
+      <path id="arcTitle" d="{{ arc_title_d }}" fill="none" stroke="none"/>
+      <path id="arcSubtitle" d="{{ arc_subtitle_d }}" fill="none" stroke="none"/>
+    </defs>
+
+    <text class="title">
+      <textPath href="#arcTitle" xlink:href="#arcTitle" startOffset="50%" text-anchor="middle">
+        PERIODIC TABLE
+      </textPath>
+    </text>
+
+    <text class="subtitle">
+      <textPath href="#arcSubtitle" xlink:href="#arcSubtitle" startOffset="50%" text-anchor="middle">
+        Reference Edition for Kindle
+      </textPath>
+    </text>
     {% for cell in cells %}
     <g transform="translate({{ cell.x }}, {{ cell.y }})">
       <rect class="cell" width="{{ cell.width }}" height="{{ cell.height }}" rx="12" ry="12"/>

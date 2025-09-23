@@ -9,8 +9,22 @@
   </style>
   <rect x="0" y="0" width="1600" height="2560" fill="#ffffff"/>
   <g transform="translate(800.0, 1280.0) rotate(-90) translate(-1280.0, -800.0)">
-    <text x="1280.0" y="160" class="title">PERIODIC TABLE</text>
-    <text x="1280.0" y="260" class="subtitle">Reference Edition for Kindle</text>
+    <defs>
+      <path id="arcTitle" d="M 804.824,1275.176 A 672.000,672.000 0 0 1 1755.176,324.824" fill="none" stroke="none"/>
+      <path id="arcSubtitle" d="M 748.256,1331.744 A 752.000,752.000 0 0 1 1811.744,268.256" fill="none" stroke="none"/>
+    </defs>
+
+    <text class="title">
+      <textPath href="#arcTitle" xlink:href="#arcTitle" startOffset="50%" text-anchor="middle">
+        PERIODIC TABLE
+      </textPath>
+    </text>
+
+    <text class="subtitle">
+      <textPath href="#arcSubtitle" xlink:href="#arcSubtitle" startOffset="50%" text-anchor="middle">
+        Reference Edition for Kindle
+      </textPath>
+    </text>
     <g transform="translate(160.0, 200.0)">
       <rect class="cell" width="124.44444444444444" height="133.33333333333334" rx="12" ry="12"/>
       <text x="20" y="36" class="atomic-number">1</text>
