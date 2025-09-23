@@ -1,0 +1,603 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2560" viewBox="0 0 1600 2560">
+  <style>
+    text { font-family: 'DejaVu Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    .title { font-size: 72px; font-weight: 700; letter-spacing: 4px; text-anchor: middle; }
+    .subtitle { font-size: 36px; font-weight: 400; text-anchor: middle; }
+    .cell { fill: #fdfdfd; stroke: #000; stroke-width: 2; }
+    .symbol { font-size: 96px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
+    .atomic-number { font-size: 28px; font-weight: 600; }
+  </style>
+  <rect x="0" y="0" width="1600" height="2560" fill="#ffffff"/>
+  <text x="800" y="140" class="title">PERIODIC TABLE</text>
+  <text x="800" y="210" class="subtitle">Reference Edition for Kindle</text>
+  <g transform="translate(80.0, 260.0)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">1</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">H</text>
+  </g>
+  <g transform="translate(1440.0, 260.0)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">2</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">He</text>
+  </g>
+  <g transform="translate(80.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">3</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Li</text>
+  </g>
+  <g transform="translate(160.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">4</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Be</text>
+  </g>
+  <g transform="translate(1040.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">5</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">B</text>
+  </g>
+  <g transform="translate(1120.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">6</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">C</text>
+  </g>
+  <g transform="translate(1200.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">7</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">N</text>
+  </g>
+  <g transform="translate(1280.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">8</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">O</text>
+  </g>
+  <g transform="translate(1360.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">9</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">F</text>
+  </g>
+  <g transform="translate(1440.0, 497.77777777777777)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">10</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ne</text>
+  </g>
+  <g transform="translate(80.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">11</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Na</text>
+  </g>
+  <g transform="translate(160.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">12</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Mg</text>
+  </g>
+  <g transform="translate(1040.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">13</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Al</text>
+  </g>
+  <g transform="translate(1120.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">14</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Si</text>
+  </g>
+  <g transform="translate(1200.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">15</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">P</text>
+  </g>
+  <g transform="translate(1280.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">16</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">S</text>
+  </g>
+  <g transform="translate(1360.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">17</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cl</text>
+  </g>
+  <g transform="translate(1440.0, 735.5555555555555)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">18</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ar</text>
+  </g>
+  <g transform="translate(80.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">19</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">K</text>
+  </g>
+  <g transform="translate(160.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">20</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ca</text>
+  </g>
+  <g transform="translate(240.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">21</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sc</text>
+  </g>
+  <g transform="translate(320.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">22</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ti</text>
+  </g>
+  <g transform="translate(400.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">23</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">V</text>
+  </g>
+  <g transform="translate(480.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">24</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cr</text>
+  </g>
+  <g transform="translate(560.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">25</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Mn</text>
+  </g>
+  <g transform="translate(640.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">26</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Fe</text>
+  </g>
+  <g transform="translate(720.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">27</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Co</text>
+  </g>
+  <g transform="translate(800.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">28</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ni</text>
+  </g>
+  <g transform="translate(880.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">29</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cu</text>
+  </g>
+  <g transform="translate(960.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">30</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Zn</text>
+  </g>
+  <g transform="translate(1040.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">31</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ga</text>
+  </g>
+  <g transform="translate(1120.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">32</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ge</text>
+  </g>
+  <g transform="translate(1200.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">33</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">As</text>
+  </g>
+  <g transform="translate(1280.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">34</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Se</text>
+  </g>
+  <g transform="translate(1360.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">35</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Br</text>
+  </g>
+  <g transform="translate(1440.0, 973.3333333333333)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">36</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Kr</text>
+  </g>
+  <g transform="translate(80.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">37</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Rb</text>
+  </g>
+  <g transform="translate(160.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">38</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sr</text>
+  </g>
+  <g transform="translate(240.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">39</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Y</text>
+  </g>
+  <g transform="translate(320.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">40</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Zr</text>
+  </g>
+  <g transform="translate(400.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">41</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Nb</text>
+  </g>
+  <g transform="translate(480.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">42</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Mo</text>
+  </g>
+  <g transform="translate(560.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">43</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Tc</text>
+  </g>
+  <g transform="translate(640.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">44</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ru</text>
+  </g>
+  <g transform="translate(720.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">45</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Rh</text>
+  </g>
+  <g transform="translate(800.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">46</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pd</text>
+  </g>
+  <g transform="translate(880.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">47</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ag</text>
+  </g>
+  <g transform="translate(960.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">48</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cd</text>
+  </g>
+  <g transform="translate(1040.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">49</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">In</text>
+  </g>
+  <g transform="translate(1120.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">50</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sn</text>
+  </g>
+  <g transform="translate(1200.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">51</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sb</text>
+  </g>
+  <g transform="translate(1280.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">52</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Te</text>
+  </g>
+  <g transform="translate(1360.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">53</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">I</text>
+  </g>
+  <g transform="translate(1440.0, 1211.111111111111)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">54</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Xe</text>
+  </g>
+  <g transform="translate(80.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">55</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cs</text>
+  </g>
+  <g transform="translate(160.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">56</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ba</text>
+  </g>
+  <g transform="translate(320.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">57</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">La</text>
+  </g>
+  <g transform="translate(400.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">58</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ce</text>
+  </g>
+  <g transform="translate(480.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">59</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pr</text>
+  </g>
+  <g transform="translate(560.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">60</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Nd</text>
+  </g>
+  <g transform="translate(640.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">61</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pm</text>
+  </g>
+  <g transform="translate(720.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">62</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sm</text>
+  </g>
+  <g transform="translate(800.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">63</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Eu</text>
+  </g>
+  <g transform="translate(880.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">64</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Gd</text>
+  </g>
+  <g transform="translate(960.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">65</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Tb</text>
+  </g>
+  <g transform="translate(1040.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">66</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Dy</text>
+  </g>
+  <g transform="translate(1120.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">67</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ho</text>
+  </g>
+  <g transform="translate(1200.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">68</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Er</text>
+  </g>
+  <g transform="translate(1280.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">69</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Tm</text>
+  </g>
+  <g transform="translate(1360.0, 1924.4444444444443)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">70</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Yb</text>
+  </g>
+  <g transform="translate(240.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">71</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Lu</text>
+  </g>
+  <g transform="translate(320.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">72</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Hf</text>
+  </g>
+  <g transform="translate(400.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">73</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ta</text>
+  </g>
+  <g transform="translate(480.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">74</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">W</text>
+  </g>
+  <g transform="translate(560.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">75</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Re</text>
+  </g>
+  <g transform="translate(640.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">76</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Os</text>
+  </g>
+  <g transform="translate(720.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">77</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ir</text>
+  </g>
+  <g transform="translate(800.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">78</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pt</text>
+  </g>
+  <g transform="translate(880.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">79</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Au</text>
+  </g>
+  <g transform="translate(960.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">80</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Hg</text>
+  </g>
+  <g transform="translate(1040.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">81</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Tl</text>
+  </g>
+  <g transform="translate(1120.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">82</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pb</text>
+  </g>
+  <g transform="translate(1200.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">83</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Bi</text>
+  </g>
+  <g transform="translate(1280.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">84</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Po</text>
+  </g>
+  <g transform="translate(1360.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">85</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">At</text>
+  </g>
+  <g transform="translate(1440.0, 1448.888888888889)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">86</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Rn</text>
+  </g>
+  <g transform="translate(80.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">87</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Fr</text>
+  </g>
+  <g transform="translate(160.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">88</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ra</text>
+  </g>
+  <g transform="translate(320.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">89</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ac</text>
+  </g>
+  <g transform="translate(400.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">90</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Th</text>
+  </g>
+  <g transform="translate(480.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">91</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pa</text>
+  </g>
+  <g transform="translate(560.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">92</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">U</text>
+  </g>
+  <g transform="translate(640.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">93</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Np</text>
+  </g>
+  <g transform="translate(720.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">94</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Pu</text>
+  </g>
+  <g transform="translate(800.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">95</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Am</text>
+  </g>
+  <g transform="translate(880.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">96</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cm</text>
+  </g>
+  <g transform="translate(960.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">97</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Bk</text>
+  </g>
+  <g transform="translate(1040.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">98</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cf</text>
+  </g>
+  <g transform="translate(1120.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">99</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Es</text>
+  </g>
+  <g transform="translate(1200.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">100</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Fm</text>
+  </g>
+  <g transform="translate(1280.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">101</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Md</text>
+  </g>
+  <g transform="translate(1360.0, 2162.222222222222)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">102</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">No</text>
+  </g>
+  <g transform="translate(240.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">103</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Lr</text>
+  </g>
+  <g transform="translate(320.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">104</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Rf</text>
+  </g>
+  <g transform="translate(400.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">105</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Db</text>
+  </g>
+  <g transform="translate(480.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">106</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Sg</text>
+  </g>
+  <g transform="translate(560.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">107</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Bh</text>
+  </g>
+  <g transform="translate(640.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">108</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Hs</text>
+  </g>
+  <g transform="translate(720.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">109</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Mt</text>
+  </g>
+  <g transform="translate(800.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">110</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ds</text>
+  </g>
+  <g transform="translate(880.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">111</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Rg</text>
+  </g>
+  <g transform="translate(960.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">112</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Cn</text>
+  </g>
+  <g transform="translate(1040.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">113</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Nh</text>
+  </g>
+  <g transform="translate(1120.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">114</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Fl</text>
+  </g>
+  <g transform="translate(1200.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">115</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Mc</text>
+  </g>
+  <g transform="translate(1280.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">116</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Lv</text>
+  </g>
+  <g transform="translate(1360.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">117</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Ts</text>
+  </g>
+  <g transform="translate(1440.0, 1686.6666666666665)">
+    <rect class="cell" width="80.0" height="237.77777777777777" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">118</text>
+    <text x="40.0" y="128.88888888888889" class="symbol">Og</text>
+  </g>
+</svg>

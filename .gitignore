@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+.cache/
+book/dist/*.epub
+book/dist/*.jpg
+book/OEBPS/images/*.jpg
