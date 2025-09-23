@@ -22,8 +22,8 @@ MARGIN_LEFT = 160
 MARGIN_RIGHT = 160
 MARGIN_TOP = 200
 MARGIN_BOTTOM = 200
-TITLE_Y = 160
-SUBTITLE_Y = 260
+TITLE_Y = 290
+SUBTITLE_Y = 220
 
 
 @dataclass
@@ -116,8 +116,8 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         lstrip_blocks=True,
     )
     template = env.get_template(template_path.name)
-    cx = LAYOUT_WIDTH / 2
-    cy = LAYOUT_HEIGHT / 2
+    cx = LAYOUT_WIDTH / 3.65
+    cy = LAYOUT_HEIGHT / 2.58
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base * 0.42
     r_subtitle = r_title + 80
@@ -132,9 +132,9 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         layout_height=LAYOUT_HEIGHT,
         arc_title_d=make_arc_path_d(cx, cy, r_title, theta_start, theta_end),
         arc_subtitle_d=make_arc_path_d(cx, cy, r_subtitle, theta_start, theta_end),
-        title_x=LAYOUT_WIDTH / 2,
+        title_x=LAYOUT_WIDTH / 3.65,
         title_y=TITLE_Y,
-        subtitle_x=LAYOUT_WIDTH / 2,
+        subtitle_x=LAYOUT_WIDTH / 3.65,
         subtitle_y=SUBTITLE_Y,
     )
 
