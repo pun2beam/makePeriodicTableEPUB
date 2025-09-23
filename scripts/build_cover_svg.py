@@ -116,7 +116,7 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         lstrip_blocks=True,
     )
     template = env.get_template(template_path.name)
-    cx = LAYOUT_WIDTH / 2.5
+    cx = LAYOUT_WIDTH / 2.2
     cy = LAYOUT_HEIGHT / 4
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
