@@ -1,1 +1,24 @@
-<?xml version='1.0' encoding='utf-8'?><package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid"><metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/"><dc:identifier id='bookid'>urn:uuid:825bc442-9155-47bc-95a2-799559112987</dc:identifier><dc:title>PeriodicTable for Kindle</dc:title><dc:language>en</dc:language><meta property='dcterms:modified'>2025-09-23T02:24:58Z</meta><meta name='cover' content='cover-image'/></metadata><manifest><item id='nav' href='nav.xhtml' media-type='application/xhtml+xml' properties='nav'/><item id='style' href='css/style.css' media-type='text/css'/><item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/><item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/><item id='quick-table' href='quick-table.xhtml' media-type='application/xhtml+xml'/><item id='index' href='index.xhtml' media-type='application/xhtml+xml'/><item id='blocks' href='blocks.xhtml' media-type='application/xhtml+xml'/><item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/><item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/><item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/></manifest><spine toc='ncx'><itemref idref='cover'/><itemref idref='quick-table'/><itemref idref='index'/><itemref idref='blocks'/><itemref idref='legend'/><itemref idref='attribution'/></spine></package>
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="bookid">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
+    <dc:identifier id='bookid'>urn:uuid:825bc442-9155-47bc-95a2-799559112987</dc:identifier>
+    <dc:title>PeriodicTable for Kindle</dc:title>
+    <dc:language>en</dc:language>
+    <meta property='dcterms:modified'>2025-09-23T02:24:58Z</meta>
+    <meta name='cover' content='cover-image'/>
+  </metadata>
+  <manifest>
+    <item id='nav' href='nav.xhtml' media-type='application/xhtml+xml' properties='nav'/>
+    <item id='style' href='css/style.css' media-type='text/css'/>
+    <item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>
+    <item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>
+    <item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>
+    <item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>
+    <item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>
+  </manifest>
+  <spine toc='ncx'>
+    <itemref idref='cover'/>
+    <itemref idref='legend'/>
+    <itemref idref='attribution'/>
+  </spine>
+</package>
