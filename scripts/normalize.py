@@ -138,7 +138,26 @@ def main() -> int:
     parser.add_argument("--meta", type=Path, default=Path("data/meta.json"))
     args = parser.parse_args()
 
-    payload = json.loads(args.input.read_text(encoding="utf-8"))
+    try:
+        raw_text = args.input.read_text(encoding="utf-8")
+    except FileNotFoundError as exc:
+        candidates = sorted(p.name for p in args.input.parent.glob("*.json"))
+        message_lines = [f"Input file not found: {args.input}"]
+        if candidates:
+            message_lines.append("Available raw data files:")
+            message_lines.extend(f"  - {name}" for name in candidates)
+            message_lines.append(
+                "Use '--input <file>' to select one of the available files or run "
+                "'scripts/fetch_wiki.py' to download new data."
+            )
+        else:
+            message_lines.append(
+                "No raw data files found. Run 'scripts/fetch_wiki.py' before running "
+                "this script."
+            )
+        raise SystemExit("\n".join(message_lines)) from exc
+
+    payload = json.loads(raw_text)
     lang = payload.get("lang", args.lang)
     records = normalize_records(payload["html"], lang)
     output = {
