@@ -25,6 +25,25 @@
         Reference Edition for Kindle
       </textPath>
     </text>
+    <g id="atom" transform="translate({{atom_x}}, {{atom_y}})">
+      <circle class="nucleus" cx="0" cy="0" r="48"/>
+      <circle class="ring" cx="0" cy="0" r="80"  fill="none" stroke="#000" stroke-width="3"/>
+      <circle class="ring" cx="0" cy="0" r="120" fill="none" stroke="#000" stroke-width="3"/>
+    
+      <!-- K殻（r=80） -->
+      <use href="#e10" transform="rotate(0)   translate(80,0)"/>
+      <use href="#e10" transform="rotate(180) translate(80,0)"/>
+    
+      <!-- L殻（r=120） -->
+      <use href="#e9" transform="rotate(0)   translate(120,0)"/>
+      <use href="#e9" transform="rotate(45)  translate(120,0)"/>
+      <use href="#e9" transform="rotate(90)  translate(120,0)"/>
+      <use href="#e9" transform="rotate(135) translate(120,0)"/>
+      <use href="#e9" transform="rotate(180) translate(120,0)"/>
+      <use href="#e9" transform="rotate(225) translate(120,0)"/>
+      <use href="#e9" transform="rotate(270) translate(120,0)"/>
+      <use href="#e9" transform="rotate(315) translate(120,0)"/>
+    </g>
     {% for cell in cells %}
     <g transform="translate({{ cell.x }}, {{ cell.y }})">
       <rect class="cell" width="{{ cell.width }}" height="{{ cell.height }}" rx="12" ry="12"/>
