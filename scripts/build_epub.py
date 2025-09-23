@@ -26,6 +26,7 @@ def render_element_page(element: Dict[str, object]) -> str:
     table_fields = [
         ("Atomic number", element.get("atomic_number")),
         ("Symbol", symbol),
+        ("Standard atomic weight", element.get("standard_atomic_weight")),
         ("Group", element.get("group")),
         ("Period", element.get("period")),
         ("Block", element.get("block_label") or element.get("block")),
@@ -47,7 +48,6 @@ def render_element_page(element: Dict[str, object]) -> str:
     )
 
     additional_pairs = [
-        ("Standard atomic weight", element.get("standard_atomic_weight")),
         ("Origin", element.get("origin")),
     ]
     additional_html = "".join(
