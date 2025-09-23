@@ -17,7 +17,7 @@ ATTRIBUTION_TEMPLATE = """<?xml version='1.0' encoding='utf-8'?>
   </head>
   <body>
     <h1>Sources &amp; Licensing</h1>
-    <p>All textual content originates from the English Wikipedia and is distributed under the terms of the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).</p>
+    <p>All textual content originates from the Wikipedia and is distributed under the terms of the Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).</p>
     <p>Retrieved on {{retrieved}}.</p>
     <ul>
     {{items}}
