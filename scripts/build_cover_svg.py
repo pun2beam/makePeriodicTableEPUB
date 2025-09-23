@@ -11,14 +11,18 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-WIDTH = 1600
-HEIGHT = 2560
+LAYOUT_WIDTH = 2560
+LAYOUT_HEIGHT = 1600
+COVER_WIDTH = 1600
+COVER_HEIGHT = 2560
 COLUMNS = 18
 ROWS = 9
-MARGIN_LEFT = 80
-MARGIN_RIGHT = 80
-MARGIN_TOP = 260
-MARGIN_BOTTOM = 160
+MARGIN_LEFT = 160
+MARGIN_RIGHT = 160
+MARGIN_TOP = 200
+MARGIN_BOTTOM = 200
+TITLE_Y = 160
+SUBTITLE_Y = 260
 
 
 @dataclass
@@ -50,8 +54,8 @@ def compute_position(element: Dict[str, Any]) -> Optional[tuple[int, int]]:
 
 
 def build_cells(elements: Iterable[Dict[str, Any]]) -> List[Cell]:
-    cell_width = (WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / COLUMNS
-    cell_height = (HEIGHT - MARGIN_TOP - MARGIN_BOTTOM) / ROWS
+    cell_width = (LAYOUT_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / COLUMNS
+    cell_height = (LAYOUT_HEIGHT - MARGIN_TOP - MARGIN_BOTTOM) / ROWS
     cells: List[Cell] = []
     for element in elements:
         position = compute_position(element)
@@ -81,7 +85,17 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         lstrip_blocks=True,
     )
     template = env.get_template(template_path.name)
-    return template.render(cells=[cell.__dict__ for cell in cells])
+    return template.render(
+        cells=[cell.__dict__ for cell in cells],
+        cover_width=COVER_WIDTH,
+        cover_height=COVER_HEIGHT,
+        layout_width=LAYOUT_WIDTH,
+        layout_height=LAYOUT_HEIGHT,
+        title_x=LAYOUT_WIDTH / 2,
+        title_y=TITLE_Y,
+        subtitle_x=LAYOUT_WIDTH / 2,
+        subtitle_y=SUBTITLE_Y,
+    )
 
 
 def main() -> int:
