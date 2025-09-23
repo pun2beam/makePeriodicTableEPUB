@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -13,14 +14,21 @@ from typing import Any, Dict, Iterable, List
 import requests
 from slugify import slugify
 
+LOGGER = logging.getLogger(__name__)
+
 USER_AGENT = "PeriodicTableEPUBBot/1.0 (https://example.com)"
 
 
 def rest_request(lang: str, page: str) -> Dict[str, Any]:
     title = page.replace(" ", "_")
     url = f"https://{lang}.wikipedia.org/api/rest_v1/page/html/{title}"
+    LOGGER.debug("Requesting REST API page html", extra={"url": url, "lang": lang, "page": page})
     response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
     response.raise_for_status()
+    LOGGER.info(
+        "Fetched REST API page html",
+        extra={"url": url, "lang": lang, "page": page, "status_code": response.status_code},
+    )
     return {
         "api": "rest",
         "page": page,
@@ -42,12 +50,20 @@ def action_request(lang: str, page: str) -> Dict[str, Any]:
         "prop": "text",
         "formatversion": 2,
     }
+    LOGGER.debug(
+        "Requesting Action API parse",
+        extra={"url": url, "lang": lang, "page": page, "params": params},
+    )
     response = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
     response.raise_for_status()
     data = response.json()
     if "error" in data:
         raise RuntimeError(data["error"])
     html = data["parse"]["text"]
+    LOGGER.info(
+        "Fetched Action API parse",
+        extra={"url": url, "lang": lang, "page": page, "status_code": response.status_code},
+    )
     return {
         "api": "action",
         "page": page,
@@ -61,12 +77,17 @@ def action_request(lang: str, page: str) -> Dict[str, Any]:
 
 def summary_request(lang: str, title: str) -> Dict[str, Any]:
     url = f"https://{lang}.wikipedia.org/api/rest_v1/page/summary/{title}"
+    LOGGER.debug("Requesting REST API summary", extra={"url": url, "lang": lang, "title": title})
     response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
     response.raise_for_status()
     data = response.json()
     data.setdefault("api", "summary")
     data.setdefault("lang", lang)
     data.setdefault("page", data.get("title", title.replace("_", " ")))
+    LOGGER.info(
+        "Fetched REST API summary",
+        extra={"url": url, "lang": lang, "title": title, "status_code": response.status_code},
+    )
     return data
 
 
@@ -134,9 +155,9 @@ def fetch_element_summaries(
     for element in elements:
         wiki_url = element.get("wiki_url")
         if not wiki_url:
-            print(
-                f"Skipping element without wiki URL: atomic number {element.get('atomic_number')}",
-                file=sys.stderr,
+            LOGGER.warning(
+                "Skipping element without wiki URL",
+                extra={"atomic_number": element.get("atomic_number")},
             )
             continue
         title = wiki_url.rsplit("/", 1)[-1]
@@ -144,16 +165,46 @@ def fetch_element_summaries(
             payload = summary_request(lang, title)
         except Exception as exc:  # noqa: BLE001
             name = element.get("name_en", title.replace("_", " "))
-            print(f"Failed to fetch summary for {name}: {exc}", file=sys.stderr)
+            LOGGER.error(
+                "Failed to fetch summary",
+                exc_info=exc,
+                extra={"name": name, "title": title, "lang": lang},
+            )
             continue
         payload["api"] = "summary"
         payload.setdefault("lang", lang)
         payload.setdefault("page", element.get("name_en") or title.replace("_", " "))
         raw_path = save_raw(payload, output_dir)
         summaries.append(build_element_summary(element, payload, raw_path))
-        print(f"Fetched summary for {element.get('name_en', title)}")
+        LOGGER.info(
+            "Fetched element summary",
+            extra={
+                "atomic_number": element.get("atomic_number"),
+                "name_en": element.get("name_en"),
+                "title": title,
+            },
+        )
     summaries.sort(key=lambda item: item.get("atomic_number", 0))
     return summaries
+
+
+def configure_logging(level: str, log_file: Path | None) -> None:
+    numeric_level = getattr(logging, level.upper(), None)
+    if not isinstance(numeric_level, int):
+        raise ValueError(f"Invalid log level: {level}")
+
+    handlers: list[logging.Handler] = [logging.StreamHandler()]
+    if log_file:
+        log_file.parent.mkdir(parents=True, exist_ok=True)
+        handlers.append(logging.FileHandler(log_file, encoding="utf-8"))
+
+    logging.basicConfig(
+        level=numeric_level,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+        handlers=handlers,
+        force=True,
+    )
+    LOGGER.setLevel(numeric_level)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -180,10 +231,27 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("data/elements.json"),
         help="Aggregated per-element summary output",
     )
+    parser.add_argument("--log-level", default="INFO", help="Logging level (e.g. INFO, DEBUG)")
+    parser.add_argument("--log-file", type=Path, help="Optional log file path")
     args = parser.parse_args(argv)
+
+    try:
+        configure_logging(args.log_level, args.log_file)
+    except Exception as exc:  # noqa: BLE001
+        print(f"Unable to configure logging: {exc}", file=sys.stderr)
+        return 1
 
     payload: Dict[str, Any] | None = None
     raw_path: Path | None = None
+    LOGGER.info(
+        "Starting fetch",
+        extra={
+            "lang": args.lang,
+            "page": args.page,
+            "api": args.api,
+            "elements_from": str(args.elements_from) if args.elements_from else None,
+        },
+    )
     for api in ([args.api] if args.api != "auto" else ["rest", "action"]):
         try:
             if api == "rest":
@@ -193,20 +261,20 @@ def main(argv: list[str] | None = None) -> int:
             payload["api"] = api
             raw_path = save_raw(payload, args.output)
             update_meta(args.meta, payload, raw_path)
-            print(f"Saved raw data to {raw_path}")
+            LOGGER.info("Saved raw data", extra={"path": str(raw_path)})
             break
         except Exception as exc:  # noqa: BLE001
-            print(f"Failed with {api} API: {exc}", file=sys.stderr)
+            LOGGER.error("Failed API request", extra={"api": api}, exc_info=exc)
             continue
     else:
-        print("All API attempts failed", file=sys.stderr)
+        LOGGER.error("All API attempts failed")
         return 1
 
     if args.elements_from:
         try:
             elements = load_elements(args.elements_from)
         except Exception as exc:  # noqa: BLE001
-            print(f"Unable to load element data: {exc}", file=sys.stderr)
+            LOGGER.error("Unable to load element data", exc_info=exc)
             return 1
         summaries = fetch_element_summaries(elements, args.lang, args.elements_output)
         if summaries:
@@ -235,9 +303,12 @@ def main(argv: list[str] | None = None) -> int:
                 }
             )
             args.meta.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
-            print(f"Wrote element summaries to {args.elements_json}")
+            LOGGER.info(
+                "Wrote element summaries",
+                extra={"path": str(args.elements_json), "count": len(summaries)},
+            )
         else:
-            print("No element summaries were fetched", file=sys.stderr)
+            LOGGER.warning("No element summaries were fetched")
 
     return 0
 
