@@ -15,13 +15,22 @@ import pandas as pd
 COLUMN_RENAMES = {
     "Z": "atomic_number",
     "Sym.": "symbol",
+    "Sym": "symbol",
     "Element": "name_en",
+    "英語名": "name_en",
+    "日本語名": "name_local",
     "Group": "group",
+    "族": "group",
     "Period": "period",
+    "周期": "period",
     "Block": "block_label",
+    "分類": "block_label",
     "Atomic weight [a] (Da)": "standard_atomic_weight",
+    "原子量": "standard_atomic_weight",
     "Phase[j]": "phase",
+    "状態": "phase",
     "Origin[i]": "origin",
+    "電子配置": "electron_configuration",
 }
 
 BLOCK_TO_SERIES = {
@@ -35,8 +44,11 @@ BLOCK_TO_SERIES = {
 def clean_column_name(col: Any) -> str:
     if isinstance(col, tuple):
         parts = [part for part in col if part and part != "vteList of chemical elements"]
-        return " ".join(parts).strip()
-    return str(col).strip()
+        text = " ".join(parts)
+    else:
+        text = str(col)
+    text = re.sub(r"\[[^\]]*\]", "", text)
+    return text.strip()
 
 
 def clean_text(value: Any) -> str:
@@ -86,11 +98,43 @@ def determine_category(block_label: str, atomic_number: int) -> str:
     return category
 
 
+def infer_block_from_group(atomic_number: int | None, group: int | None) -> tuple[str, str]:
+    if atomic_number is None:
+        return "", ""
+    if atomic_number in {1, 2}:
+        return "s", "s-block"
+    if 57 <= atomic_number <= 71 or 89 <= atomic_number <= 103:
+        return "f", "f-block"
+    if group is not None:
+        if group in {1, 2}:
+            return "s", "s-block"
+        if 3 <= group <= 12:
+            return "d", "d-block"
+        if 13 <= group <= 18:
+            return "p", "p-block"
+    if atomic_number in {3, 4, 11, 12, 19, 20, 37, 38, 55, 56, 87, 88}:
+        return "s", "s-block"
+    if atomic_number in {5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 31, 32, 33, 34, 35, 36, 49, 50, 51, 52, 53, 54, 81, 82, 83, 84, 85, 86, 113, 114, 115, 116, 117, 118}:
+        return "p", "p-block"
+    if atomic_number in {21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112}:
+        return "d", "d-block"
+    return "", ""
+
+
 def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
     dataframes = pd.read_html(StringIO(html))
-    table = dataframes[0]
-    table.columns = [clean_column_name(col) for col in table.columns]
-    table = table.rename(columns={old: new for old, new in COLUMN_RENAMES.items() if old in table.columns})
+    table = None
+    for candidate in dataframes:
+        candidate = candidate.copy()
+        candidate.columns = [clean_column_name(col) for col in candidate.columns]
+        candidate = candidate.rename(columns={old: new for old, new in COLUMN_RENAMES.items() if old in candidate.columns})
+        if "atomic_number" in candidate.columns:
+            table = candidate
+            break
+    if table is None:
+        available_sets = [", ".join(str(col) for col in df.columns) for df in dataframes]
+        details = "; ".join(available_sets)
+        raise KeyError(f"atomic_number column not found in any table. Available columns: {details}")
     table = table.dropna(subset=["atomic_number"], how="any", axis=0)
 
     records: List[Dict[str, Any]] = []
@@ -99,11 +143,25 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
         if atomic_number is None:
             continue
         symbol = clean_text(row.get("symbol"))
-        name = clean_text(row.get("name_en"))
+        name = clean_text(row.get("name_en")) or clean_text(row.get("name_local")) or symbol
         group = to_int(row.get("group"))
         period = to_int(row.get("period"))
         block_label = clean_text(row.get("block_label"))
-        block = block_label[:1].lower() if block_label else ""
+        electron_configuration = clean_text(row.get("electron_configuration"))
+        block, inferred_label = infer_block_from_group(atomic_number, group)
+        if inferred_label:
+            block_label = inferred_label
+        if not block and block_label:
+            ascii_label = block_label.strip().lower()
+            if ascii_label.endswith("-block") and ascii_label[0] in {"s", "p", "d", "f"}:
+                block = ascii_label[0]
+        if not block and electron_configuration:
+            config = electron_configuration.lower()
+            config = re.sub(r"[^spdf0-9]", "", config)
+            match = re.search(r"([spdf])[0-9]*$", config)
+            if match:
+                block = match.group(1)
+                block_label = f"{block}-block"
         standard_atomic_weight = clean_text(row.get("standard_atomic_weight"))
         category = determine_category(block_label, atomic_number)
         phase = clean_text(row.get("phase"))
