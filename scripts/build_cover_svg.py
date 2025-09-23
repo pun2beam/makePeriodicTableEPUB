@@ -100,7 +100,14 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, default=Path("data/tables.json"), help="Normalized data JSON")
+    parser.add_argument(
+        "--data",
+        "--in",
+        dest="data",
+        type=Path,
+        default=Path("data/tables.json"),
+        help="Normalized data JSON",
+    )
     parser.add_argument("--template", type=Path, default=Path("assets/templates/cover.svg.j2"))
     parser.add_argument("--out", type=Path, default=Path("assets/gen/cover.svg"))
     args = parser.parse_args()
