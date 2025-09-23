@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2560" viewBox="0 0 1600 2560">
+  <style>
+    text { font-family: 'DejaVu Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+    .title { font-size: 72px; font-weight: 700; letter-spacing: 4px; text-anchor: middle; }
+    .subtitle { font-size: 36px; font-weight: 400; text-anchor: middle; }
+    .cell { fill: #fdfdfd; stroke: #000; stroke-width: 2; }
+    .symbol { font-size: 96px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; }
+    .atomic-number { font-size: 28px; font-weight: 600; }
+  </style>
+  <rect x="0" y="0" width="1600" height="2560" fill="#ffffff"/>
+  <text x="800" y="140" class="title">PERIODIC TABLE</text>
+  <text x="800" y="210" class="subtitle">Reference Edition for Kindle</text>
+  {% for cell in cells %}
+  <g transform="translate({{ cell.x }}, {{ cell.y }})">
+    <rect class="cell" width="{{ cell.width }}" height="{{ cell.height }}" rx="12" ry="12"/>
+    <text x="20" y="36" class="atomic-number">{{ cell.atomic_number }}</text>
+    <text x="{{ cell.width / 2 }}" y="{{ cell.height / 2 + 10 }}" class="symbol">{{ cell.symbol }}</text>
+  </g>
+  {% endfor %}
+</svg>
