@@ -5,7 +5,7 @@
   "api": "rest",
   "source_url": "https://en.wikipedia.org/wiki/List_of_chemical_elements",
   "raw_file": "list-of-chemical-elements-en-rest.json",
-  "normalized_at": "2025-09-23T02:24:44.203102+00:00",
+  "normalized_at": "2025-09-23T11:16:33.364523+00:00",
   "normalized_input": "list-of-chemical-elements-en-rest.json",
   "normalized_output": "data/tables.json"
 }

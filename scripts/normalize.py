@@ -29,10 +29,13 @@ COLUMN_RENAMES = {
     "Block": "block_label",
     "分類": "block_label",
     "Atomic weight [a] (Da)": "standard_atomic_weight",
+    "Atomic weight (Da)": "standard_atomic_weight",
     "原子量": "standard_atomic_weight",
     "Phase[j]": "phase",
+    "Phase": "phase",
     "状態": "phase",
     "Origin[i]": "origin",
+    "Origin": "origin",
     "電子配置": "electron_configuration",
 }
 
@@ -51,14 +54,21 @@ def clean_column_name(col: Any) -> str:
     else:
         text = str(col)
     text = re.sub(r"\[[^\]]*\]", "", text)
+    text = re.sub(r"\s+", " ", text)
     return text.strip()
 
 
-def clean_text(value: Any) -> str:
+def clean_text(value: Any, *, preserve_bracket_values: bool = False) -> str:
     if value is None:
         return ""
     text = str(value)
-    text = re.sub(r"\[[^\]]*\]", "", text)
+    def _replace(match: re.Match[str]) -> str:
+        inner = match.group(1)
+        if preserve_bracket_values and re.fullmatch(r"\s*[\d.–-]+\s*", inner or ""):
+            return match.group(0)
+        return ""
+
+    text = re.sub(r"\[([^\]]*)\]", _replace, text)
     return text.strip()
 
 
@@ -189,6 +199,9 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
             ascii_label = block_label.strip().lower()
             if ascii_label.endswith("-block") and ascii_label[0] in {"s", "p", "d", "f"}:
                 block = ascii_label[0]
+        if atomic_number == 71 and block == "f":
+            block = "d"
+            block_label = "d-block"
         if not block and electron_configuration:
             config = electron_configuration.lower()
             config = re.sub(r"[^spdf0-9]", "", config)
@@ -196,7 +209,9 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
             if match:
                 block = match.group(1)
                 block_label = f"{block}-block"
-        standard_atomic_weight = clean_text(row.get("standard_atomic_weight"))
+        standard_atomic_weight = clean_text(
+            row.get("standard_atomic_weight"), preserve_bracket_values=True
+        )
         category = determine_category(block_label, atomic_number)
         phase = clean_text(row.get("phase"))
         origin = clean_text(row.get("origin"))
