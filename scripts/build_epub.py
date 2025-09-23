@@ -9,8 +9,11 @@ import shutil
 import uuid
 from collections import defaultdict
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple
+from typing import Any, Dict, Iterable, List, Tuple
+
+from slugify import slugify
 
 
 WIDTH = 1600
@@ -132,6 +135,88 @@ def render_blocks(elements: List[Dict]) -> str:
     )
 
 
+def render_element_page(element: Dict[str, object]) -> str:
+    name = element.get("name_en", "Unknown")
+    symbol = element.get("symbol", "?")
+    title = f"{name} ({symbol})"
+    description = element.get("description")
+    subtitle = f"<p class=\"subtitle\">{escape(str(description))}</p>" if description else ""
+
+    info_pairs = [
+        ("Atomic number", element.get("atomic_number")),
+        ("Symbol", symbol),
+        ("Standard atomic weight", element.get("standard_atomic_weight")),
+        ("Group", element.get("group")),
+        ("Period", element.get("period")),
+        ("Block", element.get("block_label") or element.get("block")),
+        ("Category", element.get("category")),
+        ("Phase (STP)", element.get("phase")),
+        ("Origin", element.get("origin")),
+    ]
+    info_html = "".join(
+        f"<dt>{escape(str(label))}</dt><dd>{escape(str(value))}</dd>"
+        for label, value in info_pairs
+        if value not in (None, "")
+    )
+    if info_html:
+        info_html = f"<dl class=\"element-meta\">{info_html}</dl>"
+
+    summary_html = element.get("summary_html")
+    if summary_html:
+        summary_section = f"<section class=\"summary\" aria-label=\"Summary\">{summary_html}</section>"
+    else:
+        summary_text = element.get("summary")
+        if summary_text:
+            summary_section = (
+                "<section class=\"summary\" aria-label=\"Summary\">"
+                f"<p>{escape(str(summary_text))}</p>"
+                "</section>"
+            )
+        else:
+            summary_section = (
+                "<section class=\"summary\" aria-label=\"Summary\">"
+                "<p>Summary not available.</p>"
+                "</section>"
+            )
+
+    source_url = element.get("source_url") or element.get("wiki_url")
+    source_html = (
+        "<p class=\"source\">Source: "
+        f"<a href=\"{escape(str(source_url))}\">Wikipedia</a> (CC BY-SA 4.0)</p>"
+        if source_url
+        else ""
+    )
+
+    return (
+        "<?xml version='1.0' encoding='utf-8'?>"
+        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
+        "<head><title>"
+        f"{escape(title)}"
+        "</title><link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\"/></head>"
+        "<body>"
+        f"<h1>{escape(name)} ({escape(str(symbol))})</h1>"
+        f"{subtitle}{info_html}{summary_section}{source_html}"
+        "</body></html>"
+    )
+
+
+def render_element_index(element_pages: List[Dict[str, Any]]) -> str:
+    items = "".join(
+        f"<li><a href=\"{escape(page['file'])}\">{escape(page['title'])}</a></li>"
+        for page in element_pages
+    )
+    return (
+        "<?xml version='1.0' encoding='utf-8'?>"
+        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
+        "<head><title>Element Profiles</title><link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\"/></head>"
+        "<body><h1>Element Profiles</h1>"
+        "<p>Concise summaries for each element sourced from Wikipedia.</p>"
+        f"<ol class=\"element-list\">{items}</ol>"
+        "<p class=\"source\">Each entry links to the corresponding Wikipedia article under CC BY-SA 4.0.</p>"
+        "</body></html>"
+    )
+
+
 def render_legend() -> str:
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
@@ -157,23 +242,63 @@ def render_cover_xhtml() -> str:
     )
 
 
-def render_nav() -> str:
+def render_nav(element_pages: List[Dict[str, Any]]) -> str:
+    nav_entries = [
+        ("Cover", "cover.xhtml", None),
+        ("Quick Table", "quick-table.xhtml", None),
+        ("Elements A–Z", "index.xhtml", None),
+        ("Block Reference", "blocks.xhtml", None),
+    ]
+    if element_pages:
+        children = "".join(
+            f"<li><a href=\"{escape(page['href'])}\">{escape(page['title'])}</a></li>"
+            for page in element_pages
+        )
+        nav_entries.append(("Element Profiles", "elements/index.xhtml", children))
+    nav_entries.extend(
+        [
+            ("Legend", "legend.xhtml", None),
+            ("Sources & Licensing", "attribution.xhtml", None),
+        ]
+    )
+    list_items = []
+    for label, href, children in nav_entries:
+        child_html = f"<ol>{children}</ol>" if children else ""
+        list_items.append(
+            f"<li><a href=\"{escape(href)}\">{escape(label)}</a>{child_html}</li>"
+        )
+    items_html = "".join(list_items)
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">"
         "<head><title>Navigation</title></head>"
-        "<body><nav epub:type=\"toc\" id=\"toc\"><h1>Contents</h1><ol>"
-        "<li><a href='cover.xhtml'>Cover</a></li>"
-        "<li><a href='quick-table.xhtml'>Quick Table</a></li>"
-        "<li><a href='index.xhtml'>Elements A–Z</a></li>"
-        "<li><a href='blocks.xhtml'>Block Reference</a></li>"
-        "<li><a href='legend.xhtml'>Legend</a></li>"
-        "<li><a href='attribution.xhtml'>Sources &amp; Licensing</a></li>"
-        "</ol></nav></body></html>"
+        f"<body><nav epub:type=\"toc\" id=\"toc\"><h1>Contents</h1><ol>{items_html}</ol></nav></body></html>"
     )
 
 
-def render_ncx(uid: str) -> str:
+def render_ncx(uid: str, element_pages: List[Dict[str, Any]]) -> str:
+    nav_points = [
+        ("Cover", "cover.xhtml"),
+        ("Quick Table", "quick-table.xhtml"),
+        ("Elements A–Z", "index.xhtml"),
+        ("Block Reference", "blocks.xhtml"),
+    ]
+    if element_pages:
+        nav_points.append(("Element Profiles", "elements/index.xhtml"))
+        nav_points.extend((page["title"], page["href"]) for page in element_pages)
+    nav_points.append(("Legend", "legend.xhtml"))
+    nav_points.append(("Sources & Licensing", "attribution.xhtml"))
+
+    nav_map_entries = []
+    for idx, (label, href) in enumerate(nav_points, start=1):
+        nav_map_entries.append(
+            "<navPoint id='navPoint-{idx}' playOrder='{idx}'>"
+            "<navLabel><text>{label}</text></navLabel>"
+            "<content src='{href}'/></navPoint>".format(
+                idx=idx, label=escape(label), href=escape(href)
+            )
+        )
+    nav_map = "".join(nav_map_entries)
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" version=\"2005-1\">"
@@ -184,18 +309,50 @@ def render_ncx(uid: str) -> str:
         "<meta name=\"dtb:maxPageNumber\" content=\"0\"/>"
         "</head>"
         "<docTitle><text>Periodic Table</text></docTitle>"
-        "<navMap>"
-        "<navPoint id='navPoint-1' playOrder='1'><navLabel><text>Cover</text></navLabel><content src='cover.xhtml'/></navPoint>"
-        "<navPoint id='navPoint-2' playOrder='2'><navLabel><text>Quick Table</text></navLabel><content src='quick-table.xhtml'/></navPoint>"
-        "<navPoint id='navPoint-3' playOrder='3'><navLabel><text>Elements A–Z</text></navLabel><content src='index.xhtml'/></navPoint>"
-        "<navPoint id='navPoint-4' playOrder='4'><navLabel><text>Block Reference</text></navLabel><content src='blocks.xhtml'/></navPoint>"
-        "<navPoint id='navPoint-5' playOrder='5'><navLabel><text>Legend</text></navLabel><content src='legend.xhtml'/></navPoint>"
-        "<navPoint id='navPoint-6' playOrder='6'><navLabel><text>Sources &amp; Licensing</text></navLabel><content src='attribution.xhtml'/></navPoint>"
-        "</navMap></ncx>"
+        f"<navMap>{nav_map}</navMap></ncx>"
     )
 
 
-def render_opf(language: str, uid: str, modified: str) -> str:
+def render_opf(
+    language: str, uid: str, modified: str, element_pages: List[Dict[str, Any]]
+) -> str:
+    manifest_items = [
+        "<item id='nav' href='nav.xhtml' media-type='application/xhtml+xml' properties='nav'/>",
+        "<item id='style' href='css/style.css' media-type='text/css'/>",
+        "<item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>",
+        "<item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='quick-table' href='quick-table.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='index' href='index.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='blocks' href='blocks.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>",
+        "<item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>",
+    ]
+    if element_pages:
+        manifest_items.append(
+            "<item id='element-index' href='elements/index.xhtml' media-type='application/xhtml+xml'/>"
+        )
+        manifest_items.extend(
+            f"<item id='{escape(page['id'])}' href='{escape(page['href'])}' media-type='application/xhtml+xml'/>"
+            for page in element_pages
+        )
+
+    spine_refs = [
+        "<itemref idref='cover'/>",
+        "<itemref idref='quick-table'/>",
+        "<itemref idref='index'/>",
+        "<itemref idref='blocks'/>",
+    ]
+    if element_pages:
+        spine_refs.append("<itemref idref='element-index'/>")
+        spine_refs.extend(f"<itemref idref='{escape(page['id'])}'/>" for page in element_pages)
+    spine_refs.extend([
+        "<itemref idref='legend'/>",
+        "<itemref idref='attribution'/>",
+    ])
+
+    manifest = "".join(manifest_items)
+    spine = "".join(spine_refs)
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"bookid\">"
@@ -206,26 +363,8 @@ def render_opf(language: str, uid: str, modified: str) -> str:
         f"<meta property='dcterms:modified'>{modified}</meta>"
         "<meta name='cover' content='cover-image'/>"
         "</metadata>"
-        "<manifest>"
-        "<item id='nav' href='nav.xhtml' media-type='application/xhtml+xml' properties='nav'/>"
-        "<item id='style' href='css/style.css' media-type='text/css'/>"
-        "<item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>"
-        "<item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='quick-table' href='quick-table.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='index' href='index.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='blocks' href='blocks.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>"
-        "<item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>"
-        "</manifest>"
-        "<spine toc='ncx'>"
-        "<itemref idref='cover'/>"
-        "<itemref idref='quick-table'/>"
-        "<itemref idref='index'/>"
-        "<itemref idref='blocks'/>"
-        "<itemref idref='legend'/>"
-        "<itemref idref='attribution'/>"
-        "</spine>"
+        f"<manifest>{manifest}</manifest>"
+        f"<spine toc='ncx'>{spine}</spine>"
         "</package>"
     )
 
@@ -282,11 +421,45 @@ def main() -> int:
     parser.add_argument("--out", type=Path, default=Path("book/dist/PeriodicTable.en.epub"))
     parser.add_argument("--oebps", type=Path, default=Path("book/OEBPS"))
     parser.add_argument("--meta-inf", dest="meta_inf", type=Path, default=Path("book/META-INF"))
+    parser.add_argument(
+        "--element-data",
+        type=Path,
+        default=Path("data/elements.json"),
+        help="Aggregated per-element summary data",
+    )
     args = parser.parse_args()
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
     elements = data["elements"]
     language = data.get("meta", {}).get("language", "en")
+
+    element_pages: List[Dict[str, Any]] = []
+    if args.element_data and args.element_data.exists():
+        element_payload = json.loads(args.element_data.read_text(encoding="utf-8"))
+        raw_elements = element_payload.get("elements", [])
+        for item in raw_elements:
+            try:
+                number = int(item.get("atomic_number"))
+            except (TypeError, ValueError):
+                continue
+            slug_source = item.get("name_en") or item.get("symbol") or str(number)
+            slug_text = slugify(slug_source) or f"element-{number}"
+            filename = f"{number:03d}-{slug_text}.xhtml"
+            href = f"elements/{filename}"
+            title = f"{item.get('name_en', 'Element')} ({item.get('symbol', '?')})"
+            element_pages.append(
+                {
+                    "id": f"element-{number:03d}",
+                    "href": href,
+                    "file": filename,
+                    "title": title,
+                    "data": item,
+                    "number": number,
+                }
+            )
+        element_pages.sort(key=lambda page: int(page["number"]))
+        for page in element_pages:
+            page.pop("number", None)
 
     uid = str(uuid.uuid4())
     modified = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -298,12 +471,21 @@ def main() -> int:
     write_text(args.oebps / "quick-table.xhtml", render_quick_table(elements))
     write_text(args.oebps / "index.xhtml", render_index(elements))
     write_text(args.oebps / "blocks.xhtml", render_blocks(elements))
+    if element_pages:
+        write_text(
+            args.oebps / "elements" / "index.xhtml", render_element_index(element_pages)
+        )
+        for page in element_pages:
+            write_text(
+                args.oebps / "elements" / page["file"],
+                render_element_page(page["data"]),
+            )
     write_text(args.oebps / "legend.xhtml", render_legend())
     if not (args.oebps / "attribution.xhtml").exists():
         raise FileNotFoundError("Attribution XHTML not found. Run license_attribution.py first.")
-    write_text(args.oebps / "nav.xhtml", render_nav())
-    write_text(args.oebps / "toc.ncx", render_ncx(uid))
-    write_text(args.oebps / "content.opf", render_opf(language, uid, modified))
+    write_text(args.oebps / "nav.xhtml", render_nav(element_pages))
+    write_text(args.oebps / "toc.ncx", render_ncx(uid, element_pages))
+    write_text(args.oebps / "content.opf", render_opf(language, uid, modified, element_pages))
 
     ensure_container(args.meta_inf)
     create_mimetype(args.meta_inf.parent)
