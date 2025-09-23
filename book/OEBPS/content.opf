@@ -12,13 +12,11 @@
     <item id='style' href='css/style.css' media-type='text/css'/>
     <item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>
     <item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>
-    <item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>
     <item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>
     <item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>
   </manifest>
   <spine toc='ncx'>
     <itemref idref='cover'/>
-    <itemref idref='legend'/>
     <itemref idref='attribution'/>
   </spine>
 </package>

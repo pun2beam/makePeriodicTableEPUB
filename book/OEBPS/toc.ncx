@@ -15,10 +15,6 @@
       <content src='cover.xhtml'/>
     </navPoint>
     <navPoint id='navPoint-2' playOrder='2'>
-      <navLabel><text>Legend</text></navLabel>
-      <content src='legend.xhtml'/>
-    </navPoint>
-    <navPoint id='navPoint-3' playOrder='3'>
       <navLabel><text>Sources &amp; Licensing</text></navLabel>
       <content src='attribution.xhtml'/>
     </navPoint>
