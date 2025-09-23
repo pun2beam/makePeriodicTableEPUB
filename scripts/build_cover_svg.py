@@ -119,10 +119,10 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
     cx = LAYOUT_WIDTH / 3
     cy = LAYOUT_HEIGHT / 4
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
-    r_title = base / 12
+    r_title = base / 10
     r_subtitle = r_title + 80
-    theta_start = -45.0
-    theta_end = 90.0
+    theta_start = -75.0
+    theta_end = 120.0
 
     return template.render(
         cells=[cell.__dict__ for cell in cells],
