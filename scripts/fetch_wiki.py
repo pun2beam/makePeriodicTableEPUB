@@ -13,7 +13,7 @@ from typing import Any, Dict, Iterable, List
 
 import requests
 from slugify import slugify
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 
 LANG_ALIASES: dict[str, str] = {
     "jp": "ja",
@@ -128,6 +128,26 @@ def summary_request(lang: str, title: str) -> Dict[str, Any]:
     return data
 
 
+def infer_lang_from_wiki_url(url: str | None) -> str | None:
+    """Best-effort detection of the wiki language from a full URL."""
+
+    if not url:
+        return None
+    try:
+        netloc = urlparse(url).netloc.lower()
+    except ValueError:
+        return None
+    if not netloc:
+        return None
+    parts = netloc.split(".")
+    if len(parts) < 3 or parts[-2:] != ["wikipedia", "org"]:
+        return None
+    candidate = parts[0]
+    if not candidate:
+        return None
+    return candidate
+
+
 def save_raw(payload: Dict[str, Any], output_dir: Path) -> Path:
     slug = slugify(f"{payload['page']}-{payload['lang']}-{payload['api']}")
     output_path = output_dir / f"{slug}.json"
@@ -198,18 +218,23 @@ def fetch_element_summaries(
             )
             continue
         title = wiki_url.rsplit("/", 1)[-1]
+        request_lang = infer_lang_from_wiki_url(wiki_url) or lang
         try:
-            payload = summary_request(lang, title)
+            payload = summary_request(request_lang, title)
         except Exception as exc:  # noqa: BLE001
             name = element.get("name_en", title.replace("_", " "))
             LOGGER.error(
                 "Failed to fetch summary",
                 exc_info=exc,
-                extra={"element_name": name, "title": title, "lang": lang},
+                extra={
+                    "element_name": name,
+                    "title": title,
+                    "lang": request_lang,
+                },
             )
             continue
         payload["api"] = "summary"
-        payload.setdefault("lang", lang)
+        payload.setdefault("lang", request_lang)
         payload.setdefault("page", element.get("name_en") or title.replace("_", " "))
         raw_path = save_raw(payload, output_dir)
         summaries.append(build_element_summary(element, payload, raw_path))
