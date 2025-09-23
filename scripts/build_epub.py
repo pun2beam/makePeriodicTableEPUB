@@ -23,24 +23,40 @@ def render_element_page(element: Dict[str, object]) -> str:
     description = element.get("description")
     subtitle = f"<p class=\"subtitle\">{escape(str(description))}</p>" if description else ""
 
-    info_pairs = [
+    table_fields = [
         ("Atomic number", element.get("atomic_number")),
         ("Symbol", symbol),
-        ("Standard atomic weight", element.get("standard_atomic_weight")),
         ("Group", element.get("group")),
         ("Period", element.get("period")),
         ("Block", element.get("block_label") or element.get("block")),
         ("Category", element.get("category")),
         ("Phase (STP)", element.get("phase")),
-        ("Origin", element.get("origin")),
     ]
-    info_html = "".join(
-        f"<dt>{escape(str(label))}</dt><dd>{escape(str(value))}</dd>"
-        for label, value in info_pairs
+    table_rows = "".join(
+        "<tr><th scope=\"row\">{label}</th><td>{value}</td></tr>".format(
+            label=escape(str(label)),
+            value=escape(str(value)),
+        )
+        for label, value in table_fields
         if value not in (None, "")
     )
-    if info_html:
-        info_html = f"<dl class=\"element-meta\">{info_html}</dl>"
+    table_html = (
+        f"<table class=\"element-meta\"><tbody>{table_rows}</tbody></table>"
+        if table_rows
+        else ""
+    )
+
+    additional_pairs = [
+        ("Standard atomic weight", element.get("standard_atomic_weight")),
+        ("Origin", element.get("origin")),
+    ]
+    additional_html = "".join(
+        f"<dt>{escape(str(label))}</dt><dd>{escape(str(value))}</dd>"
+        for label, value in additional_pairs
+        if value not in (None, "")
+    )
+    if additional_html:
+        additional_html = f"<dl class=\"element-meta-extra\">{additional_html}</dl>"
 
     summary_html = element.get("summary_html")
     if summary_html:
@@ -76,7 +92,7 @@ def render_element_page(element: Dict[str, object]) -> str:
         "</title><link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\"/></head>"
         "<body>"
         f"<h1>{escape(name)} ({escape(str(symbol))})</h1>"
-        f"{subtitle}{info_html}{summary_section}{source_html}"
+        f"{subtitle}{table_html}{additional_html}{summary_section}{source_html}"
         "</body></html>"
     )
 

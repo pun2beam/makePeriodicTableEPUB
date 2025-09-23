@@ -18,10 +18,36 @@ table {
   margin-bottom: 1.5em;
 }
 
-td, th {
+td,
+th {
   border: 1px solid #000;
   padding: 0.4em;
   text-align: center;
+}
+
+.element-meta {
+  margin-bottom: 1.5em;
+}
+
+.element-meta th {
+  text-align: left;
+  width: 45%;
+}
+
+.element-meta td {
+  text-align: left;
+}
+
+.element-meta-extra {
+  margin-bottom: 1.5em;
+}
+
+.element-meta-extra dt {
+  font-weight: 700;
+}
+
+.element-meta-extra dd {
+  margin: 0 0 0.4em 0;
 }
 
 .periodic-grid {
