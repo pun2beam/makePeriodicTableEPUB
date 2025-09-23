@@ -7,132 +7,13 @@ import argparse
 import json
 import shutil
 import uuid
-from collections import defaultdict
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Tuple
+from typing import Any, Dict, List
 
 from slugify import slugify
 
-
-WIDTH = 1600
-HEIGHT = 2560
-COLUMNS = 18
-ROWS = 9
-MARGIN_LEFT = 80
-MARGIN_RIGHT = 80
-MARGIN_TOP = 260
-MARGIN_BOTTOM = 160
-LAN_START_COLUMN = 4
-
-
-RowKey = Tuple[int, int]
-
-
-def compute_position(element: Dict) -> Tuple[int, int] | None:
-    atomic_number = element["atomic_number"]
-    group = element.get("group")
-    period = element.get("period")
-    if group and period and 1 <= group <= 18:
-        return period, group
-    if 57 <= atomic_number <= 71:
-        column = LAN_START_COLUMN + (atomic_number - 57)
-        return 8, column
-    if 89 <= atomic_number <= 103:
-        column = LAN_START_COLUMN + (atomic_number - 89)
-        return 9, column
-    return None
-
-
-def build_grid(elements: Iterable[Dict]) -> Dict[RowKey, Dict]:
-    grid: Dict[RowKey, Dict] = {}
-    for element in elements:
-        pos = compute_position(element)
-        if pos:
-            grid[pos] = element
-    return grid
-
-
-def render_quick_table(elements: List[Dict]) -> str:
-    grid = build_grid(elements)
-    header_cells = "".join(f"<th>{i}</th>" for i in range(1, 19))
-    rows_html: List[str] = [f"<tr><th>Group</th>{header_cells}</tr>"]
-    for row_index in range(1, ROWS + 1):
-        if row_index <= 7:
-            label = f"Period {row_index}"
-        elif row_index == 8:
-            label = "Lanthanides"
-        else:
-            label = "Actinides"
-        cells: List[str] = []
-        for col in range(1, COLUMNS + 1):
-            element = grid.get((row_index, col))
-            if element:
-                cells.append(
-                    (
-                        f"<td id=\"el-{element['atomic_number']}\" title=\"{element['name_en']}\">"
-                        f"<div class=\"atomic-number\">{element['atomic_number']}</div>"
-                        f"<div class=\"symbol\">{element['symbol']}</div>"
-                        "</td>"
-                    )
-                )
-            else:
-                cells.append("<td>&nbsp;</td>")
-        rows_html.append(f"<tr><th>{label}</th>{''.join(cells)}</tr>")
-    table_html = "".join(rows_html)
-    return (
-        "<?xml version='1.0' encoding='utf-8'?>"
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Quick Table</title><link rel=\"stylesheet\" href=\"css/style.css\" type=\"text/css\"/></head>"
-        "<body><h1>Quick Table</h1>"
-        f"<table class=\"periodic-grid\">{table_html}</table>"
-        "<p>Tap an element cell for its symbol and number. Use the index for alphabetical lookup.</p>"
-        "</body></html>"
-    )
-
-
-def render_index(elements: List[Dict]) -> str:
-    sorted_elements = sorted(elements, key=lambda e: (e["symbol"], e["atomic_number"]))
-    items = "".join(
-        f"<li><a href=\"quick-table.xhtml#el-{e['atomic_number']}\">{e['symbol']} — {e['name_en']}</a></li>" for e in sorted_elements
-    )
-    return (
-        "<?xml version='1.0' encoding='utf-8'?>"
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Elements A–Z</title><link rel=\"stylesheet\" href=\"css/style.css\" type=\"text/css\"/></head>"
-        "<body><h1>Elements A–Z</h1>"
-        f"<ul>{items}</ul>"
-        "</body></html>"
-    )
-
-
-def render_blocks(elements: List[Dict]) -> str:
-    groups: Dict[str, List[Dict]] = defaultdict(list)
-    for element in elements:
-        block = element.get("block", "?")
-        groups[block].append(element)
-    for block_elements in groups.values():
-        block_elements.sort(key=lambda e: e["atomic_number"])
-    section_html = []
-    block_names = {"s": "s-block", "p": "p-block", "d": "d-block", "f": "f-block", "": "other"}
-    order = ["s", "p", "d", "f", ""]
-    for key in order:
-        if key not in groups:
-            continue
-        title = block_names.get(key, key)
-        items = "".join(
-            f"<li><a href=\"quick-table.xhtml#el-{e['atomic_number']}\">{e['symbol']} — {e['name_en']}</a></li>"
-            for e in groups[key]
-        )
-        section_html.append(f"<h2>{title}</h2><ul>{items}</ul>")
-    body = "".join(section_html)
-    return (
-        "<?xml version='1.0' encoding='utf-8'?>"
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Blocks</title><link rel=\"stylesheet\" href=\"css/style.css\" type=\"text/css\"/></head>"
-        f"<body><h1>Block Reference</h1>{body}</body></html>"
-    )
 
 
 def render_element_page(element: Dict[str, object]) -> str:
@@ -243,12 +124,7 @@ def render_cover_xhtml() -> str:
 
 
 def render_nav(element_pages: List[Dict[str, Any]]) -> str:
-    nav_entries = [
-        ("Cover", "cover.xhtml", None),
-        ("Quick Table", "quick-table.xhtml", None),
-        ("Elements A–Z", "index.xhtml", None),
-        ("Block Reference", "blocks.xhtml", None),
-    ]
+    nav_entries = [("Cover", "cover.xhtml", None)]
     if element_pages:
         children = "".join(
             f"<li><a href=\"{escape(page['href'])}\">{escape(page['title'])}</a></li>"
@@ -277,12 +153,7 @@ def render_nav(element_pages: List[Dict[str, Any]]) -> str:
 
 
 def render_ncx(uid: str, element_pages: List[Dict[str, Any]]) -> str:
-    nav_points = [
-        ("Cover", "cover.xhtml"),
-        ("Quick Table", "quick-table.xhtml"),
-        ("Elements A–Z", "index.xhtml"),
-        ("Block Reference", "blocks.xhtml"),
-    ]
+    nav_points = [("Cover", "cover.xhtml")]
     if element_pages:
         nav_points.append(("Element Profiles", "elements/index.xhtml"))
         nav_points.extend((page["title"], page["href"]) for page in element_pages)
@@ -321,9 +192,6 @@ def render_opf(
         "<item id='style' href='css/style.css' media-type='text/css'/>",
         "<item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>",
         "<item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>",
-        "<item id='quick-table' href='quick-table.xhtml' media-type='application/xhtml+xml'/>",
-        "<item id='index' href='index.xhtml' media-type='application/xhtml+xml'/>",
-        "<item id='blocks' href='blocks.xhtml' media-type='application/xhtml+xml'/>",
         "<item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>",
         "<item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>",
         "<item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>",
@@ -337,12 +205,7 @@ def render_opf(
             for page in element_pages
         )
 
-    spine_refs = [
-        "<itemref idref='cover'/>",
-        "<itemref idref='quick-table'/>",
-        "<itemref idref='index'/>",
-        "<itemref idref='blocks'/>",
-    ]
+    spine_refs = ["<itemref idref='cover'/>"]
     if element_pages:
         spine_refs.append("<itemref idref='element-index'/>")
         spine_refs.extend(f"<itemref idref='{escape(page['id'])}'/>" for page in element_pages)
@@ -430,7 +293,6 @@ def main() -> int:
     args = parser.parse_args()
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
-    elements = data["elements"]
     language = data.get("meta", {}).get("language", "en")
 
     element_pages: List[Dict[str, Any]] = []
@@ -468,9 +330,6 @@ def main() -> int:
     copy_static(args.css, args.cover, args.oebps)
 
     write_text(args.oebps / "cover.xhtml", render_cover_xhtml())
-    write_text(args.oebps / "quick-table.xhtml", render_quick_table(elements))
-    write_text(args.oebps / "index.xhtml", render_index(elements))
-    write_text(args.oebps / "blocks.xhtml", render_blocks(elements))
     if element_pages:
         write_text(
             args.oebps / "elements" / "index.xhtml", render_element_index(element_pages)
