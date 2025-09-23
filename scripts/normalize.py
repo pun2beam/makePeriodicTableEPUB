@@ -10,7 +10,10 @@ from io import StringIO
 from pathlib import Path
 from typing import Any, Dict, List
 
+from urllib.parse import urljoin
+
 import pandas as pd
+from bs4 import BeautifulSoup
 
 COLUMN_RENAMES = {
     "Z": "atomic_number",
@@ -57,6 +60,35 @@ def clean_text(value: Any) -> str:
     text = str(value)
     text = re.sub(r"\[[^\]]*\]", "", text)
     return text.strip()
+
+
+def build_wiki_link_index(html: str, lang: str) -> Dict[str, str]:
+    """Build an index of link texts to absolute Wikipedia URLs."""
+
+    soup = BeautifulSoup(html, "html.parser")
+    base_url = f"https://{lang}.wikipedia.org"
+    link_index: Dict[str, str] = {}
+    for anchor in soup.find_all("a", href=True):
+        href = anchor["href"]
+        if href.startswith("#"):
+            continue
+        if href.startswith("/wiki/"):
+            page = href.split("/wiki/", 1)[1]
+            if not page or ":" in page:
+                continue
+            absolute = urljoin(base_url, href)
+        elif href.startswith("http://") or href.startswith("https://"):
+            parsed = href.split("//", 1)[-1]
+            if ".wikipedia.org/" not in parsed:
+                continue
+            absolute = href
+        else:
+            continue
+        text = clean_text(anchor.get_text(" ", strip=True))
+        if not text:
+            continue
+        link_index.setdefault(text, absolute)
+    return link_index
 
 
 def to_int(value: Any) -> int | None:
@@ -138,6 +170,8 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
     table = table.dropna(subset=["atomic_number"], how="any", axis=0)
 
     records: List[Dict[str, Any]] = []
+    link_index = build_wiki_link_index(html, lang)
+
     for _, row in table.iterrows():
         atomic_number = to_int(row.get("atomic_number"))
         if atomic_number is None:
@@ -166,7 +200,15 @@ def normalize_records(html: str, lang: str) -> List[Dict[str, Any]]:
         category = determine_category(block_label, atomic_number)
         phase = clean_text(row.get("phase"))
         origin = clean_text(row.get("origin"))
-        wiki_url = f"https://{lang}.wikipedia.org/wiki/{name.replace(' ', '_')}"
+        wiki_url = ""
+        candidate_names = [clean_text(row.get("name_local")), clean_text(row.get("name_en")), symbol]
+        for candidate in candidate_names:
+            if candidate and candidate in link_index:
+                wiki_url = link_index[candidate]
+                break
+        if not wiki_url:
+            fallback_name = next((c for c in candidate_names if c), name)
+            wiki_url = f"https://{lang}.wikipedia.org/wiki/{fallback_name.replace(' ', '_')}"
 
         record = {
             "atomic_number": atomic_number,
