@@ -116,7 +116,7 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         lstrip_blocks=True,
     )
     template = env.get_template(template_path.name)
-    cx = LAYOUT_WIDTH / 3
+    cx = LAYOUT_WIDTH / 2.5
     cy = LAYOUT_HEIGHT / 4
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
@@ -134,8 +134,8 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         arc_subtitle_d=make_arc_path_d(cx, cy, r_subtitle, theta_start, theta_end),
         title_x=cx - r_tile,
         title_y=cy - r_tile,
-        subtitle_x=cx - r_subtitle,
-        subtitle_y=cx - r_subtitle,
+        subtitle_x=cx - r_subtitle * 1.2,
+        subtitle_y=cx - r_subtitle * 1.2,
         atom_x=cx,
         atom_y=cy,
     )
