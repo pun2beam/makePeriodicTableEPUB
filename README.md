@@ -19,6 +19,8 @@ pip install -r requirements.txt
    ```bash
    python scripts/fetch_wiki.py --lang en --page "List of chemical elements"
    ```
+   Add `--log-level DEBUG` to see detailed progress information or `--log-file logs/wiki-fetch.log`
+   to also persist the log to disk.
 2. Normalize the downloaded table into `data/tables.json`:
    ```bash
    python scripts/normalize.py
