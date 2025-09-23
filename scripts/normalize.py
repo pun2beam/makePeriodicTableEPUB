@@ -64,7 +64,7 @@ def clean_text(value: Any, *, preserve_bracket_values: bool = False) -> str:
     text = str(value)
     def _replace(match: re.Match[str]) -> str:
         inner = match.group(1)
-        if preserve_bracket_values and re.fullmatch(r"\s*[\d.–-]+\s*", inner or ""):
+        if preserve_bracket_values and re.fullmatch(r"\s*[\d.,–-]+\s*", inner or ""):
             return match.group(0)
         return ""
 
