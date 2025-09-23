@@ -120,7 +120,7 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
     cy = LAYOUT_HEIGHT / 4
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
-    r_subtitle = r_title + 100
+    r_subtitle = r_title + 10
     theta_start = -75.0
     theta_end = 120.0
 
