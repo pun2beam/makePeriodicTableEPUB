@@ -13,6 +13,17 @@ from typing import Any, Dict, Iterable, List
 
 import requests
 from slugify import slugify
+from urllib.parse import quote
+
+LANG_ALIASES: dict[str, str] = {
+    "jp": "ja",
+}
+
+
+def normalize_lang(lang: str) -> str:
+    """Normalize Wikipedia language codes."""
+
+    return LANG_ALIASES.get(lang.lower(), lang)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -20,20 +31,29 @@ USER_AGENT = "PeriodicTableEPUBBot/1.0 (https://example.com)"
 
 
 def rest_request(lang: str, page: str) -> Dict[str, Any]:
+    request_lang = normalize_lang(lang)
     title = page.replace(" ", "_")
-    url = f"https://{lang}.wikipedia.org/api/rest_v1/page/html/{title}"
-    LOGGER.debug("Requesting REST API page html", extra={"url": url, "lang": lang, "page": page})
+    url = f"https://{request_lang}.wikipedia.org/api/rest_v1/page/html/{quote(title)}"
+    LOGGER.debug(
+        "Requesting REST API page html",
+        extra={"url": url, "lang": request_lang, "page": page},
+    )
     response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
     response.raise_for_status()
     LOGGER.info(
         "Fetched REST API page html",
-        extra={"url": url, "lang": lang, "page": page, "status_code": response.status_code},
+        extra={
+            "url": url,
+            "lang": request_lang,
+            "page": page,
+            "status_code": response.status_code,
+        },
     )
     return {
         "api": "rest",
         "page": page,
         "lang": lang,
-        "source_url": f"https://{lang}.wikipedia.org/wiki/{title}",
+        "source_url": f"https://{request_lang}.wikipedia.org/wiki/{title}",
         "content_type": response.headers.get("Content-Type", "text/html"),
         "html": response.text,
         "headers": dict(response.headers),
@@ -41,8 +61,9 @@ def rest_request(lang: str, page: str) -> Dict[str, Any]:
 
 
 def action_request(lang: str, page: str) -> Dict[str, Any]:
+    request_lang = normalize_lang(lang)
     title = page.replace(" ", "_")
-    url = f"https://{lang}.wikipedia.org/w/api.php"
+    url = f"https://{request_lang}.wikipedia.org/w/api.php"
     params = {
         "action": "parse",
         "page": page,
@@ -52,9 +73,11 @@ def action_request(lang: str, page: str) -> Dict[str, Any]:
     }
     LOGGER.debug(
         "Requesting Action API parse",
-        extra={"url": url, "lang": lang, "page": page, "params": params},
+        extra={"url": url, "lang": request_lang, "page": page, "params": params},
     )
-    response = requests.get(url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30)
+    response = requests.get(
+        url, params=params, headers={"User-Agent": USER_AGENT}, timeout=30
+    )
     response.raise_for_status()
     data = response.json()
     if "error" in data:
@@ -62,13 +85,18 @@ def action_request(lang: str, page: str) -> Dict[str, Any]:
     html = data["parse"]["text"]
     LOGGER.info(
         "Fetched Action API parse",
-        extra={"url": url, "lang": lang, "page": page, "status_code": response.status_code},
+        extra={
+            "url": url,
+            "lang": request_lang,
+            "page": page,
+            "status_code": response.status_code,
+        },
     )
     return {
         "api": "action",
         "page": page,
         "lang": lang,
-        "source_url": f"https://{lang}.wikipedia.org/wiki/{title}",
+        "source_url": f"https://{request_lang}.wikipedia.org/wiki/{title}",
         "content_type": "text/html",
         "html": html,
         "headers": dict(response.headers),
@@ -76,8 +104,12 @@ def action_request(lang: str, page: str) -> Dict[str, Any]:
 
 
 def summary_request(lang: str, title: str) -> Dict[str, Any]:
-    url = f"https://{lang}.wikipedia.org/api/rest_v1/page/summary/{title}"
-    LOGGER.debug("Requesting REST API summary", extra={"url": url, "lang": lang, "title": title})
+    request_lang = normalize_lang(lang)
+    url = f"https://{request_lang}.wikipedia.org/api/rest_v1/page/summary/{quote(title)}"
+    LOGGER.debug(
+        "Requesting REST API summary",
+        extra={"url": url, "lang": request_lang, "title": title},
+    )
     response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=30)
     response.raise_for_status()
     data = response.json()
@@ -86,7 +118,12 @@ def summary_request(lang: str, title: str) -> Dict[str, Any]:
     data.setdefault("page", data.get("title", title.replace("_", " ")))
     LOGGER.info(
         "Fetched REST API summary",
-        extra={"url": url, "lang": lang, "title": title, "status_code": response.status_code},
+        extra={
+            "url": url,
+            "lang": request_lang,
+            "title": title,
+            "status_code": response.status_code,
+        },
     )
     return data
 
@@ -168,7 +205,7 @@ def fetch_element_summaries(
             LOGGER.error(
                 "Failed to fetch summary",
                 exc_info=exc,
-                extra={"name": name, "title": title, "lang": lang},
+                extra={"element_name": name, "title": title, "lang": lang},
             )
             continue
         payload["api"] = "summary"
