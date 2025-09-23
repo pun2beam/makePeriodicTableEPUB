@@ -15,6 +15,33 @@ from typing import Any, Dict, List
 from slugify import slugify
 
 
+def sanitize_language_code(language: str | None) -> str:
+    """Return a BCP 47-ish language tag Kindle accepts.
+
+    Kindle Previewer is strict about the presence of ``dc:language`` and
+    treats an empty string (or values such as ``None``) as the field being
+    missing.  We therefore normalise the value and fall back to ``"en"`` if
+    the supplied code is not usable.
+    """
+
+    if not language:
+        return "en"
+
+    candidate = str(language).strip().replace("_", "-")
+    if not candidate:
+        return "en"
+
+    # Kindle Previewer accepts standard BCP 47 tags.  When the caller already
+    # provides a valid tag (e.g. ``en`` or ``en-US``) we keep it as-is.  For
+    # defensive programming we only allow alphanumeric subtags separated by
+    # ``-``.  Any other characters would be rejected during validation, so we
+    # revert to the default ``en``.
+    for subtag in candidate.split("-"):
+        if not subtag or not subtag.isalnum():
+            return "en"
+    return candidate
+
+
 def get_element_display_name(element: Dict[str, Any], language: str) -> str:
     """Return the preferred display name for an element."""
 
@@ -304,7 +331,7 @@ def main() -> int:
     args = parser.parse_args()
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
-    language = data.get("meta", {}).get("language", "en")
+    language = sanitize_language_code(data.get("meta", {}).get("language"))
 
     element_pages: List[Dict[str, Any]] = []
     if args.element_data and args.element_data.exists():
