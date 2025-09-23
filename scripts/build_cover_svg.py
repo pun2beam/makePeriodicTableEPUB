@@ -120,7 +120,7 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
     cy = LAYOUT_HEIGHT / 4
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
-    r_subtitle = r_title + 80
+    r_subtitle = r_title + 100
     theta_start = -75.0
     theta_end = 120.0
 
@@ -134,8 +134,8 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         arc_subtitle_d=make_arc_path_d(cx, cy, r_subtitle, theta_start, theta_end),
         title_x=cx - r_tile,
         title_y=cy - r_tile,
-        subtitle_x=cx - r_subtitle * 1.2,
-        subtitle_y=cx - r_subtitle * 1.2,
+        subtitle_x=cx - r_subtitle * 1.5,
+        subtitle_y=cx - r_subtitle * 1.5,
         atom_x=cx,
         atom_y=cy,
     )
