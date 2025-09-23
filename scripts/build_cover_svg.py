@@ -48,14 +48,14 @@ def compute_position(element: Dict[str, Any]) -> Optional[tuple[int, int]]:
     atomic_number = element["atomic_number"]
     group = element.get("group")
     period = element.get("period")
-    if group and period and 1 <= group <= 18:
-        return period, group
     if 57 <= atomic_number <= 71:
         column = LAN_START_COLUMN + (atomic_number - 57)
         return LAN_ROW, column
     if 89 <= atomic_number <= 103:
         column = LAN_START_COLUMN + (atomic_number - 89)
         return ACT_ROW, column
+    if group and period and 1 <= group <= 18:
+        return period, group
     return None
 
 
