@@ -136,6 +136,8 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         title_y=TITLE_Y,
         subtitle_x=LAYOUT_WIDTH / 3.65,
         subtitle_y=SUBTITLE_Y,
+        atom_x=cx,
+        atom_y=cy,
     )
 
 
