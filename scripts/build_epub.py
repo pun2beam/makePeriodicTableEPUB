@@ -114,22 +114,6 @@ def render_element_index(element_pages: List[Dict[str, Any]]) -> str:
     )
 
 
-def render_legend() -> str:
-    return (
-        "<?xml version='1.0' encoding='utf-8'?>"
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Legend</title><link rel=\"stylesheet\" href=\"css/style.css\" type=\"text/css\"/></head>"
-        "<body><h1>Legend</h1>"
-        "<ul>"
-        "<li><strong>Atomic number:</strong> top-left number in each cell.</li>"
-        "<li><strong>Element symbol:</strong> large center text.</li>"
-        "<li>Lanthanides and actinides appear in dedicated rows for quick reference.</li>"
-        "<li>All data sourced from English Wikipedia and normalized for Kindle display.</li>"
-        "</ul>"
-        "</body></html>"
-    )
-
-
 def render_cover_xhtml() -> str:
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
@@ -147,12 +131,7 @@ def render_nav(element_pages: List[Dict[str, Any]]) -> str:
             for page in element_pages
         )
         nav_entries.append(("Element Profiles", "elements/index.xhtml", children))
-    nav_entries.extend(
-        [
-            ("Legend", "legend.xhtml", None),
-            ("Sources & Licensing", "attribution.xhtml", None),
-        ]
-    )
+    nav_entries.append(("Sources & Licensing", "attribution.xhtml", None))
     list_items = []
     for label, href, children in nav_entries:
         child_html = f"<ol>{children}</ol>" if children else ""
@@ -173,7 +152,6 @@ def render_ncx(uid: str, element_pages: List[Dict[str, Any]]) -> str:
     if element_pages:
         nav_points.append(("Element Profiles", "elements/index.xhtml"))
         nav_points.extend((page["title"], page["href"]) for page in element_pages)
-    nav_points.append(("Legend", "legend.xhtml"))
     nav_points.append(("Sources & Licensing", "attribution.xhtml"))
 
     nav_map_entries = []
@@ -208,7 +186,6 @@ def render_opf(
         "<item id='style' href='css/style.css' media-type='text/css'/>",
         "<item id='cover-image' href='images/cover.jpg' media-type='image/jpeg'/>",
         "<item id='cover' href='cover.xhtml' media-type='application/xhtml+xml'/>",
-        "<item id='legend' href='legend.xhtml' media-type='application/xhtml+xml'/>",
         "<item id='attribution' href='attribution.xhtml' media-type='application/xhtml+xml'/>",
         "<item id='ncx' href='toc.ncx' media-type='application/x-dtbncx+xml'/>",
     ]
@@ -225,10 +202,7 @@ def render_opf(
     if element_pages:
         spine_refs.append("<itemref idref='element-index'/>")
         spine_refs.extend(f"<itemref idref='{escape(page['id'])}'/>" for page in element_pages)
-    spine_refs.extend([
-        "<itemref idref='legend'/>",
-        "<itemref idref='attribution'/>",
-    ])
+    spine_refs.append("<itemref idref='attribution'/>")
 
     manifest = "".join(manifest_items)
     spine = "".join(spine_refs)
@@ -355,7 +329,6 @@ def main() -> int:
                 args.oebps / "elements" / page["file"],
                 render_element_page(page["data"]),
             )
-    write_text(args.oebps / "legend.xhtml", render_legend())
     if not (args.oebps / "attribution.xhtml").exists():
         raise FileNotFoundError("Attribution XHTML not found. Run license_attribution.py first.")
     write_text(args.oebps / "nav.xhtml", render_nav(element_pages))
