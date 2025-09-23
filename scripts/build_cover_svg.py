@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
@@ -77,6 +78,36 @@ def build_cells(elements: Iterable[Dict[str, Any]]) -> List[Cell]:
     return cells
 
 
+def _topclock_deg_to_svg_rad(theta_deg_topclock: float) -> float:
+    """Convert degrees where 0° is up and increases clockwise to SVG radians."""
+
+    return math.radians(theta_deg_topclock - 90.0)
+
+
+def _polar_to_xy(cx: float, cy: float, r: float, theta_deg_topclock: float) -> tuple[float, float]:
+    phi = _topclock_deg_to_svg_rad(theta_deg_topclock)
+    return (cx + r * math.cos(phi), cy + r * math.sin(phi))
+
+
+def make_arc_path_d(
+    cx: float,
+    cy: float,
+    r: float,
+    theta_start_deg_topclock: float,
+    theta_end_deg_topclock: float,
+) -> str:
+    """Create a path `d` string for a clockwise semicircular arc."""
+
+    x1, y1 = _polar_to_xy(cx, cy, r, theta_start_deg_topclock)
+    x2, y2 = _polar_to_xy(cx, cy, r, theta_end_deg_topclock)
+    large_arc_flag = 0
+    sweep_flag = 1
+    return (
+        f"M {x1:.3f},{y1:.3f} "
+        f"A {r:.3f},{r:.3f} 0 {large_arc_flag} {sweep_flag} {x2:.3f},{y2:.3f}"
+    )
+
+
 def render_svg(template_path: Path, cells: List[Cell]) -> str:
     env = Environment(
         loader=FileSystemLoader(template_path.parent),
@@ -85,12 +116,22 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         lstrip_blocks=True,
     )
     template = env.get_template(template_path.name)
+    cx = LAYOUT_WIDTH / 2
+    cy = LAYOUT_HEIGHT / 2
+    base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
+    r_title = base * 0.42
+    r_subtitle = r_title + 80
+    theta_start = -135.0
+    theta_end = 45.0
+
     return template.render(
         cells=[cell.__dict__ for cell in cells],
         cover_width=COVER_WIDTH,
         cover_height=COVER_HEIGHT,
         layout_width=LAYOUT_WIDTH,
         layout_height=LAYOUT_HEIGHT,
+        arc_title_d=make_arc_path_d(cx, cy, r_title, theta_start, theta_end),
+        arc_subtitle_d=make_arc_path_d(cx, cy, r_subtitle, theta_start, theta_end),
         title_x=LAYOUT_WIDTH / 2,
         title_y=TITLE_Y,
         subtitle_x=LAYOUT_WIDTH / 2,
