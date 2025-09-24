@@ -14,7 +14,7 @@ from typing import Any, Dict, List
 
 from slugify import slugify
 
-from localization import get_localized_strings
+from localization import DEFAULT_LANGUAGE, get_localized_strings
 
 
 def sanitize_language_code(language: str | None) -> str:
@@ -262,8 +262,26 @@ def render_ncx(uid: str, element_pages: List[Dict[str, Any]], strings: Dict[str,
     )
 
 
+def _normalize_localized_mapping(values: Any) -> Dict[str, str]:
+    """Return a mapping of language codes to non-empty string values."""
+
+    mapping: Dict[str, str] = {}
+    if isinstance(values, dict):
+        for lang_code, text in values.items():
+            if text in (None, ""):
+                continue
+            sanitized_code = sanitize_language_code(lang_code)
+            mapping[sanitized_code] = str(text)
+    return mapping
+
+
 def render_opf(
-    language: str, uid: str, modified: str, element_pages: List[Dict[str, Any]]
+    language: str,
+    uid: str,
+    modified: str,
+    element_pages: List[Dict[str, Any]],
+    strings: Dict[str, str],
+    meta: Dict[str, Any],
 ) -> str:
     manifest_items = [
         "<item id='nav' href='nav.xhtml' media-type='application/xhtml+xml' properties='nav'/>",
@@ -290,15 +308,120 @@ def render_opf(
 
     manifest = "".join(manifest_items)
     spine = "".join(spine_refs)
+
+    if not isinstance(meta, dict):
+        meta = {}
+
+    primary_language = sanitize_language_code(meta.get("language") or language)
+    titles = _normalize_localized_mapping(meta.get("titles"))
+    subtitles = _normalize_localized_mapping(meta.get("subtitles"))
+
+    if meta.get("title") not in (None, ""):
+        titles[primary_language] = str(meta["title"])
+    if meta.get("subtitle") not in (None, ""):
+        subtitles[primary_language] = str(meta["subtitle"])
+
+    primary_title = titles.get(primary_language)
+    if not primary_title and titles:
+        primary_title = next(iter(titles.values()))
+
+    default_strings: Dict[str, str] | None = None
+    if not primary_title:
+        candidates = [
+            strings.get("book_title"),
+            strings.get("cover_arc_title"),
+        ]
+        if primary_language != DEFAULT_LANGUAGE:
+            default_strings = get_localized_strings(DEFAULT_LANGUAGE)
+            candidates.extend(
+                [
+                    default_strings.get("book_title"),
+                    default_strings.get("cover_arc_title"),
+                ]
+            )
+        candidates.append("Periodic Table")
+        for candidate in candidates:
+            if candidate not in (None, ""):
+                primary_title = str(candidate)
+                break
+    if not primary_title:
+        primary_title = "Periodic Table"
+
+    primary_subtitle = subtitles.get(primary_language)
+    if not primary_subtitle and subtitles:
+        primary_subtitle = next(iter(subtitles.values()))
+
+    if primary_subtitle in (None, ""):
+        if default_strings is None and primary_language != DEFAULT_LANGUAGE:
+            default_strings = get_localized_strings(DEFAULT_LANGUAGE)
+        subtitle_candidates = [
+            subtitles.get(DEFAULT_LANGUAGE),
+            strings.get("book_subtitle"),
+            strings.get("cover_arc_subtitle"),
+        ]
+        if primary_language != DEFAULT_LANGUAGE and default_strings is not None:
+            subtitle_candidates.extend(
+                [
+                    default_strings.get("book_subtitle"),
+                    default_strings.get("cover_arc_subtitle"),
+                ]
+            )
+        for candidate in subtitle_candidates:
+            if candidate not in (None, ""):
+                primary_subtitle = str(candidate)
+                break
+
+    primary_subtitle_text = None
+    if primary_subtitle not in (None, ""):
+        primary_subtitle_text = str(primary_subtitle)
+
+    authors: List[str]
+    author_value = meta.get("authors")
+    if isinstance(author_value, str):
+        authors = [author_value]
+    elif isinstance(author_value, list):
+        authors = [str(item) for item in author_value if item not in (None, "")]
+    else:
+        authors = []
+
+    if not authors and meta.get("author") not in (None, ""):
+        authors = [str(meta["author"])]
+    if not authors:
+        fallback_author = strings.get("book_author")
+        if fallback_author:
+            authors = [str(fallback_author)]
+
+    creator_entries = [
+        f"<dc:creator id='creator-{idx}'>{escape(str(author))}</dc:creator>"
+        for idx, author in enumerate(authors, start=1)
+    ]
+
+    metadata_items = [f"<dc:identifier id='bookid'>urn:uuid:{escape(uid)}</dc:identifier>"]
+
+    lang_attr = escape(str(primary_language), quote=True)
+    metadata_items.append(
+        f"<dc:title id='title-main' xml:lang='{lang_attr}'>{escape(str(primary_title))}</dc:title>"
+    )
+    if primary_subtitle_text is not None:
+        metadata_items.append(
+            f"<meta property='subtitle' refines='#title-main' xml:lang='{lang_attr}'>{escape(primary_subtitle_text)}</meta>"
+        )
+
+    metadata_items.extend(creator_entries)
+    metadata_items.extend(
+        [
+            f"<dc:language>{escape(str(language))}</dc:language>",
+            f"<meta property='dcterms:modified'>{escape(str(modified))}</meta>",
+            "<meta name='cover' content='cover-image'/>",
+        ]
+    )
+    metadata_xml = "".join(metadata_items)
+
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"bookid\">"
         "<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\">"
-        f"<dc:identifier id='bookid'>urn:uuid:{uid}</dc:identifier>"
-        "<dc:title>PeriodicTable for Kindle</dc:title>"
-        f"<dc:language>{language}</dc:language>"
-        f"<meta property='dcterms:modified'>{modified}</meta>"
-        "<meta name='cover' content='cover-image'/>"
+        f"{metadata_xml}"
         "</metadata>"
         f"<manifest>{manifest}</manifest>"
         f"<spine toc='ncx'>{spine}</spine>"
@@ -367,7 +490,9 @@ def main() -> int:
     args = parser.parse_args()
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
-    language = sanitize_language_code(data.get("meta", {}).get("language"))
+    raw_meta = data.get("meta")
+    book_meta = raw_meta if isinstance(raw_meta, dict) else {}
+    language = sanitize_language_code(book_meta.get("language"))
     strings = get_localized_strings(language)
 
     element_pages: List[Dict[str, Any]] = []
@@ -434,7 +559,10 @@ def main() -> int:
         args.oebps / "toc.ncx",
         render_ncx(uid, element_pages, strings),
     )
-    write_text(args.oebps / "content.opf", render_opf(language, uid, modified, element_pages))
+    write_text(
+        args.oebps / "content.opf",
+        render_opf(language, uid, modified, element_pages, strings, book_meta),
+    )
 
     ensure_container(args.meta_inf)
     create_mimetype(args.meta_inf.parent)
