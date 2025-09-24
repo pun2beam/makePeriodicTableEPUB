@@ -306,8 +306,8 @@ def render_svg(
     # have their first or last characters clipped when rendered along the
     # circle.  Expanding both ends maintains the centered alignment while
     # giving the text a bit more breathing room.
-    theta_start = -95.0
-    theta_end = 140.0
+    theta_start = 45 - 140
+    theta_end = 45 + 140
 
     font_families = _compute_font_families(language)
 
