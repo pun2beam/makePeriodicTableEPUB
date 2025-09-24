@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 1. Fetch Wikipedia data (defaults to the English "List of chemical elements" page):
    ```bash
-   python scripts/fetch_wiki.py --lang en --page "List of chemical elements"
+   python scripts/fetch_wiki.py --lang en --page "List of chemical elements" --output-file list-of-chemical-elements-en-rest.json
    ```
    Add `--log-level DEBUG` to see detailed progress information or `--log-file logs/wiki-fetch.log`
    to also persist the log to disk.
