@@ -131,8 +131,12 @@ def render_svg(template_path: Path, cells: List[Cell], strings: Dict[str, str]) 
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
     r_subtitle = r_title + 120
-    theta_start = -75.0
-    theta_end = 120.0
+    # Allow a wider arc so that long strings (e.g., "PERIODIC TABLE") don't
+    # have their first or last characters clipped when rendered along the
+    # circle.  Expanding both ends maintains the centered alignment while
+    # giving the text a bit more breathing room.
+    theta_start = -95.0
+    theta_end = 140.0
 
     return template.render(
         cells=[cell.__dict__ for cell in cells],
