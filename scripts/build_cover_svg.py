@@ -12,6 +12,8 @@ from typing import Any, Dict, Iterable, List, Optional
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+from localization import get_localized_strings
+
 LAYOUT_WIDTH = 2560
 LAYOUT_HEIGHT = 1600
 COVER_WIDTH = 1600
@@ -116,7 +118,7 @@ def make_arc_path_d(
     )
 
 
-def render_svg(template_path: Path, cells: List[Cell]) -> str:
+def render_svg(template_path: Path, cells: List[Cell], strings: Dict[str, str]) -> str:
     env = Environment(
         loader=FileSystemLoader(template_path.parent),
         autoescape=select_autoescape(enabled_extensions=("svg", "xml")),
@@ -146,6 +148,8 @@ def render_svg(template_path: Path, cells: List[Cell]) -> str:
         subtitle_y=cx - r_subtitle / 1.414,
         atom_x=cx,
         atom_y=cy,
+        title_text=strings["cover_arc_title"],
+        subtitle_text=strings["cover_arc_subtitle"],
     )
 
 
@@ -166,7 +170,8 @@ def main() -> int:
     data = json.loads(args.data.read_text(encoding="utf-8"))
     elements = data["elements"]
     cells = build_cells(elements)
-    svg = render_svg(args.template, cells)
+    strings = get_localized_strings(data.get("meta", {}).get("language"))
+    svg = render_svg(args.template, cells, strings)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(svg, encoding="utf-8")
     print(f"Wrote cover SVG to {args.out}")
