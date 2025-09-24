@@ -180,7 +180,7 @@ def render_cover_xhtml(strings: Dict[str, str]) -> str:
     alt_text = escape(strings["cover_image_alt"])
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
-        "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
+        "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">"
         "<head><title>"
         f"{title}"
         "</title></head>"
@@ -242,7 +242,7 @@ def render_ncx(uid: str, element_pages: List[Dict[str, Any]], strings: Dict[str,
         "<?xml version='1.0' encoding='utf-8'?>"
         "<ncx xmlns=\"http://www.daisy.org/z3986/2005/ncx/\" version=\"2005-1\">"
         "<head>"
-        f"<meta name=\"dtb:uid\" content=\"{uid}\"/>"
+        f"<meta name=\"dtb:uid\" content=\"urn:uuid:{uid}\"/>"
         "<meta name=\"dtb:depth\" content=\"1\"/>"
         "<meta name=\"dtb:totalPageCount\" content=\"0\"/>"
         "<meta name=\"dtb:maxPageNumber\" content=\"0\"/>"
