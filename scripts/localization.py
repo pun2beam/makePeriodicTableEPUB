@@ -16,6 +16,7 @@ _BASE_STRINGS: Dict[str, Dict[str, str]] = {
         "cover_image_alt": "Periodic Table cover",
         "cover_arc_title": "PERIODIC TABLE",
         "cover_arc_subtitle": "Reference Edition for Kindle",
+        "book_author": "Wikipedia contributors",
         "toc_heading": "Contents",
         "element_profiles_title": "Element Profiles",
         "element_profiles_nav_label": "Element Profiles",
@@ -44,6 +45,7 @@ _BASE_STRINGS: Dict[str, Dict[str, str]] = {
         "cover_image_alt": "元素周期表の表紙",
         "cover_arc_title": "元 素 周 期 表",
         "cover_arc_subtitle": "Reference Edition for Kindle",
+        "book_author": "ウィキペディア寄稿者",
         "toc_heading": "目次",
         "element_profiles_title": "元素の基本情報",
         "element_profiles_nav_label": "元素の基本情報",
@@ -102,6 +104,9 @@ def get_localized_strings(language: str | None) -> Dict[str, str]:
     base.setdefault("element_profiles_nav_label", base["element_profiles_title"])
     base.setdefault("sources_nav_label", base["sources_title"])
     base.setdefault("cover_nav_label", base["cover_page_title"])
+    base.setdefault("book_title", base.get("cover_arc_title"))
+    base.setdefault("book_subtitle", base.get("cover_arc_subtitle"))
+    base.setdefault("book_author", _BASE_STRINGS[DEFAULT_LANGUAGE]["book_author"])
     return base
 
 
