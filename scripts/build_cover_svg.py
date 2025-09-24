@@ -298,10 +298,10 @@ def render_svg(
     )
     template = env.get_template(template_path.name)
     cx = LAYOUT_WIDTH / 2.5
-    cy = LAYOUT_HEIGHT / 4
+    cy = LAYOUT_HEIGHT / 3.5
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
-    r_subtitle = r_title + 120
+    r_subtitle = r_title + 100
     # Allow a wider arc so that long strings (e.g., "PERIODIC TABLE") don't
     # have their first or last characters clipped when rendered along the
     # circle.  Expanding both ends maintains the centered alignment while
