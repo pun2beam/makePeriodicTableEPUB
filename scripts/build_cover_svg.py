@@ -298,7 +298,7 @@ def render_svg(
     )
     template = env.get_template(template_path.name)
     cx = LAYOUT_WIDTH / 2.5
-    cy = LAYOUT_HEIGHT / 4.5
+    cy = LAYOUT_HEIGHT / 4.2
     base = min(LAYOUT_WIDTH, LAYOUT_HEIGHT)
     r_title = base / 8
     r_subtitle = r_title + 100
