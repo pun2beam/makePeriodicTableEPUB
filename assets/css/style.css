@@ -24,6 +24,20 @@ td, th {
   text-align: center;
 }
 
+.element-meta {
+  width: 100%;
+  max-width: 28em;
+  margin: 0 0 1.5em;
+}
+
+.element-meta th {
+  text-align: left;
+}
+
+.element-meta td {
+  text-align: right;
+}
+
 .periodic-grid {
   font-size: 0.85em;
 }
