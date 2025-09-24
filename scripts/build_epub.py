@@ -61,7 +61,7 @@ def get_element_display_name(element: Dict[str, Any], language: str) -> str:
     )
 
 
-def render_element_page(element: Dict[str, object]) -> str:
+def render_element_page(element: Dict[str, object], strings: Dict[str, str]) -> str:
     name = (
         element.get("display_name")
         or element.get("name_en")
@@ -74,14 +74,20 @@ def render_element_page(element: Dict[str, object]) -> str:
     subtitle = f"<p class=\"subtitle\">{escape(str(description))}</p>" if description else ""
 
     table_fields = [
-        ("Atomic number", element.get("atomic_number")),
-        ("Symbol", symbol),
-        ("Standard atomic weight", element.get("standard_atomic_weight")),
-        ("Group", element.get("group")),
-        ("Period", element.get("period")),
-        ("Block", element.get("block_label") or element.get("block")),
-        ("Category", element.get("category")),
-        ("Phase (STP)", element.get("phase")),
+        (strings["element_meta_atomic_number"], element.get("atomic_number")),
+        (strings["element_meta_symbol"], symbol),
+        (
+            strings["element_meta_standard_atomic_weight"],
+            element.get("standard_atomic_weight"),
+        ),
+        (strings["element_meta_group"], element.get("group")),
+        (strings["element_meta_period"], element.get("period")),
+        (
+            strings["element_meta_block"],
+            element.get("block_label") or element.get("block"),
+        ),
+        (strings["element_meta_category"], element.get("category")),
+        (strings["element_meta_phase_stp"], element.get("phase")),
     ]
     table_rows = "".join(
         "<tr><th scope=\"row\">{label}</th><td>{value}</td></tr>".format(
@@ -98,7 +104,7 @@ def render_element_page(element: Dict[str, object]) -> str:
     )
 
     additional_pairs = [
-        ("Origin", element.get("origin")),
+        (strings["element_meta_origin"], element.get("origin")),
     ]
     additional_html = "".join(
         f"<dt>{escape(str(label))}</dt><dd>{escape(str(value))}</dd>"
@@ -412,7 +418,7 @@ def main() -> int:
         for page in element_pages:
             write_text(
                 args.oebps / "elements" / page["file"],
-                render_element_page(page["data"]),
+                render_element_page(page["data"], strings),
             )
     if not (args.oebps / "attribution.xhtml").exists():
         raise FileNotFoundError("Attribution XHTML not found. Run license_attribution.py first.")
