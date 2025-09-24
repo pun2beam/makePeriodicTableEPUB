@@ -25,16 +25,19 @@ td, th {
 }
 
 .element-meta {
-  width: 100%;
-  max-width: 28em;
+  width: 24em;
+  max-width: 24em;
   margin: 0 0 1.5em;
 }
 
 .element-meta th {
   text-align: left;
+  padding: 0.2em 0.4em;
+  width: 60%;
 }
 
 .element-meta td {
+  padding: 0.2em 0.4em;
   text-align: right;
 }
 
