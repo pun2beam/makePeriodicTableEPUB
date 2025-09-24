@@ -58,6 +58,7 @@ _BASE_STRINGS: Dict[str, Dict[str, str]] = {
         "element_meta_category": "分類",
         "element_meta_phase_stp": "標準状態での相",
         "element_meta_origin": "名称の由来",
+        "element_meta_name_en": "英語名",
         "sources_title": "出典とライセンス",
         "sources_nav_label": "出典とライセンス",
         "sources_intro": (

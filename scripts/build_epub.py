@@ -88,7 +88,13 @@ def render_element_page(element: Dict[str, object], strings: Dict[str, str]) -> 
         ),
         (strings["element_meta_category"], element.get("category")),
         (strings["element_meta_phase_stp"], element.get("phase")),
+        (strings["element_meta_origin"], element.get("origin")),
     ]
+
+    english_label = strings.get("element_meta_name_en")
+    english_name = element.get("name_en")
+    if english_label and english_name not in (None, ""):
+        table_fields.append((english_label, english_name))
     table_rows = "".join(
         "<tr><th scope=\"row\">{label}</th><td>{value}</td></tr>".format(
             label=escape(str(label)),
@@ -103,9 +109,7 @@ def render_element_page(element: Dict[str, object], strings: Dict[str, str]) -> 
         else ""
     )
 
-    additional_pairs = [
-        (strings["element_meta_origin"], element.get("origin")),
-    ]
+    additional_pairs = []
     additional_html = "".join(
         f"<dt>{escape(str(label))}</dt><dd>{escape(str(value))}</dd>"
         for label, value in additional_pairs
