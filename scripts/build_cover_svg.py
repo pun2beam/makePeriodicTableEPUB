@@ -119,6 +119,20 @@ def _polar_to_xy(cx: float, cy: float, r: float, theta_deg_topclock: float) -> t
     return (cx + r * math.cos(phi), cy + r * math.sin(phi))
 
 
+def _normalize_topclock_deg(theta_deg_topclock: float) -> float:
+    """Normalize a top-clockwise angle to the ``[0, 360)`` range."""
+
+    return theta_deg_topclock % 360.0
+
+
+def _clockwise_extent_deg(theta_start_deg_topclock: float, theta_end_deg_topclock: float) -> float:
+    """Return the clockwise span from ``theta_start`` to ``theta_end`` in degrees."""
+
+    start = _normalize_topclock_deg(theta_start_deg_topclock)
+    end = _normalize_topclock_deg(theta_end_deg_topclock)
+    return (end - start) % 360.0
+
+
 def make_arc_path_d(
     cx: float,
     cy: float,
@@ -130,7 +144,8 @@ def make_arc_path_d(
 
     x1, y1 = _polar_to_xy(cx, cy, r, theta_start_deg_topclock)
     x2, y2 = _polar_to_xy(cx, cy, r, theta_end_deg_topclock)
-    large_arc_flag = 0
+    arc_extent = _clockwise_extent_deg(theta_start_deg_topclock, theta_end_deg_topclock)
+    large_arc_flag = 1 if arc_extent > 180 else 0
     sweep_flag = 1
     return (
         f"M {x1:.3f},{y1:.3f} "
