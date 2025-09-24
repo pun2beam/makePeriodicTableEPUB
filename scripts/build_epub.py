@@ -14,6 +14,8 @@ from typing import Any, Dict, List
 
 from slugify import slugify
 
+from localization import get_localized_strings
+
 
 def sanitize_language_code(language: str | None) -> str:
     """Return a BCP 47-ish language tag Kindle accepts.
@@ -145,41 +147,60 @@ def render_element_page(element: Dict[str, object]) -> str:
     )
 
 
-def render_element_index(element_pages: List[Dict[str, Any]]) -> str:
+def render_element_index(element_pages: List[Dict[str, Any]], strings: Dict[str, str]) -> str:
     items = "".join(
         f"<li><a href=\"{escape(page['file'])}\">{escape(page['title'])}</a></li>"
         for page in element_pages
     )
+    title = escape(strings["element_profiles_title"])
+    intro = escape(strings["element_profiles_intro"])
+    source_note = escape(strings["element_profiles_source_note"])
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Element Profiles</title><link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\"/></head>"
-        "<body><h1>Element Profiles</h1>"
-        "<p>Concise summaries for each element sourced from Wikipedia.</p>"
+        "<head><title>"
+        f"{title}"
+        "</title><link rel=\"stylesheet\" href=\"../css/style.css\" type=\"text/css\"/></head>"
+        "<body><h1>"
+        f"{title}"
+        "</h1>"
+        "<p>"
+        f"{intro}"
+        "</p>"
         f"<ol class=\"element-list\">{items}</ol>"
-        "<p class=\"source\">Each entry links to the corresponding Wikipedia article under CC BY-SA 4.0.</p>"
+        "<p class=\"source\">"
+        f"{source_note}"
+        "</p>"
         "</body></html>"
     )
 
 
-def render_cover_xhtml() -> str:
+def render_cover_xhtml(strings: Dict[str, str]) -> str:
+    title = escape(strings["cover_page_title"])
+    alt_text = escape(strings["cover_image_alt"])
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<html xmlns=\"http://www.w3.org/1999/xhtml\">"
-        "<head><title>Cover</title></head>"
-        "<body><section epub:type=\"cover\" id=\"cover\"><img src=\"images/cover.jpg\" alt=\"Periodic Table cover\"/></section></body></html>"
+        "<head><title>"
+        f"{title}"
+        "</title></head>"
+        "<body><section epub:type=\"cover\" id=\"cover\"><img src=\"images/cover.jpg\" alt=\""
+        f"{alt_text}"
+        "\"/></section></body></html>"
     )
 
 
-def render_nav(element_pages: List[Dict[str, Any]]) -> str:
-    nav_entries = [("Cover", "cover.xhtml", None)]
+def render_nav(element_pages: List[Dict[str, Any]], strings: Dict[str, str]) -> str:
+    nav_entries = [(strings["cover_nav_label"], "cover.xhtml", None)]
     if element_pages:
         children = "".join(
             f"<li><a href=\"{escape(page['href'])}\">{escape(page['title'])}</a></li>"
             for page in element_pages
         )
-        nav_entries.append(("Element Profiles", "elements/index.xhtml", children))
-    nav_entries.append(("Sources & Licensing", "attribution.xhtml", None))
+        nav_entries.append(
+            (strings["element_profiles_nav_label"], "elements/index.xhtml", children)
+        )
+    nav_entries.append((strings["sources_nav_label"], "attribution.xhtml", None))
     list_items = []
     for label, href, children in nav_entries:
         child_html = f"<ol>{children}</ol>" if children else ""
@@ -187,20 +208,25 @@ def render_nav(element_pages: List[Dict[str, Any]]) -> str:
             f"<li><a href=\"{escape(href)}\">{escape(label)}</a>{child_html}</li>"
         )
     items_html = "".join(list_items)
+    heading = escape(strings["toc_heading"])
     return (
         "<?xml version='1.0' encoding='utf-8'?>"
         "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">"
         "<head><title>Navigation</title></head>"
-        f"<body><nav epub:type=\"toc\" id=\"toc\"><h1>Contents</h1><ol>{items_html}</ol></nav></body></html>"
+        "<body><nav epub:type=\"toc\" id=\"toc\"><h1>"
+        f"{heading}"
+        "</h1><ol>"
+        f"{items_html}"
+        "</ol></nav></body></html>"
     )
 
 
-def render_ncx(uid: str, element_pages: List[Dict[str, Any]]) -> str:
-    nav_points = [("Cover", "cover.xhtml")]
+def render_ncx(uid: str, element_pages: List[Dict[str, Any]], strings: Dict[str, str]) -> str:
+    nav_points = [(strings["cover_nav_label"], "cover.xhtml")]
     if element_pages:
-        nav_points.append(("Element Profiles", "elements/index.xhtml"))
+        nav_points.append((strings["element_profiles_nav_label"], "elements/index.xhtml"))
         nav_points.extend((page["title"], page["href"]) for page in element_pages)
-    nav_points.append(("Sources & Licensing", "attribution.xhtml"))
+    nav_points.append((strings["sources_nav_label"], "attribution.xhtml"))
 
     nav_map_entries = []
     for idx, (label, href) in enumerate(nav_points, start=1):
@@ -332,6 +358,7 @@ def main() -> int:
 
     data = json.loads(args.data.read_text(encoding="utf-8"))
     language = sanitize_language_code(data.get("meta", {}).get("language"))
+    strings = get_localized_strings(language)
 
     element_pages: List[Dict[str, Any]] = []
     if args.element_data and args.element_data.exists():
@@ -376,10 +403,11 @@ def main() -> int:
     args.oebps.mkdir(parents=True, exist_ok=True)
     copy_static(args.css, args.cover, args.oebps)
 
-    write_text(args.oebps / "cover.xhtml", render_cover_xhtml())
+    write_text(args.oebps / "cover.xhtml", render_cover_xhtml(strings))
     if element_pages:
         write_text(
-            args.oebps / "elements" / "index.xhtml", render_element_index(element_pages)
+            args.oebps / "elements" / "index.xhtml",
+            render_element_index(element_pages, strings),
         )
         for page in element_pages:
             write_text(
@@ -388,8 +416,14 @@ def main() -> int:
             )
     if not (args.oebps / "attribution.xhtml").exists():
         raise FileNotFoundError("Attribution XHTML not found. Run license_attribution.py first.")
-    write_text(args.oebps / "nav.xhtml", render_nav(element_pages))
-    write_text(args.oebps / "toc.ncx", render_ncx(uid, element_pages))
+    write_text(
+        args.oebps / "nav.xhtml",
+        render_nav(element_pages, strings),
+    )
+    write_text(
+        args.oebps / "toc.ncx",
+        render_ncx(uid, element_pages, strings),
+    )
     write_text(args.oebps / "content.opf", render_opf(language, uid, modified, element_pages))
 
     ensure_container(args.meta_inf)
