@@ -148,10 +148,24 @@ def infer_lang_from_wiki_url(url: str | None) -> str | None:
     return candidate
 
 
-def save_raw(payload: Dict[str, Any], output_dir: Path) -> Path:
+def resolve_output_path(output_dir: Path, output_file: Path | None, payload: Dict[str, Any]) -> Path:
+    if output_file:
+        if output_file.is_absolute():
+            output_path = output_file
+        else:
+            output_path = output_dir / output_file
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        return output_path
     slug = slugify(f"{payload['page']}-{payload['lang']}-{payload['api']}")
     output_path = output_dir / f"{slug}.json"
     output_dir.mkdir(parents=True, exist_ok=True)
+    return output_path
+
+
+def save_raw(
+    payload: Dict[str, Any], output_dir: Path, output_file: Path | None = None
+) -> Path:
+    output_path = resolve_output_path(output_dir, output_file, payload)
     with output_path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
     return output_path
@@ -164,7 +178,7 @@ def update_meta(meta_path: Path, payload: Dict[str, Any], raw_path: Path) -> Non
         "page": payload["page"],
         "api": payload["api"],
         "source_url": payload["source_url"],
-        "raw_file": raw_path.name,
+        "raw_file": str(raw_path),
     }
     meta_path.parent.mkdir(parents=True, exist_ok=True)
     with meta_path.open("w", encoding="utf-8") as f:
@@ -275,6 +289,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--page", default="Periodic table", help="Page title to fetch")
     parser.add_argument("--api", choices=["auto", "rest", "action"], default="auto")
     parser.add_argument("--output", type=Path, default=Path("data/raw"), help="Directory to store raw files")
+    parser.add_argument(
+        "--output-file",
+        type=Path,
+        help="Optional explicit output filename for the raw response",
+    )
     parser.add_argument("--meta", type=Path, default=Path("data/meta.json"), help="Path to write metadata")
     parser.add_argument(
         "--elements-from",
@@ -321,7 +340,7 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 payload = action_request(args.lang, args.page)
             payload["api"] = api
-            raw_path = save_raw(payload, args.output)
+            raw_path = save_raw(payload, args.output, args.output_file)
             update_meta(args.meta, payload, raw_path)
             LOGGER.info("Saved raw data", extra={"path": str(raw_path)})
             break
