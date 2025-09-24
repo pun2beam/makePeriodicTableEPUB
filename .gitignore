@@ -5,3 +5,8 @@ __pycache__/
 book/dist/*.epub
 book/dist/*.jpg
 book/OEBPS/images/*.jpg
+
+# Generated outputs
+data/
+book/
+assets/gen/
