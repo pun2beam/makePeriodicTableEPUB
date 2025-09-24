@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="{{ cover_width }}" height="{{ cover_height }}" viewBox="0 0 {{ cover_width }} {{ cover_height }}">
   <style>
-    text { font-family: 'Helvetica Neue', Helvetica, Arial, 'Noto Sans', 'DejaVu Sans', 'Noto Sans CJK JP', 'Noto Sans JP', sans-serif; }
+    text { font-family: {{ body_font_stack | safe }}; }
+    .title, .subtitle { font-family: {{ title_font_stack | safe }}; }
     .title { font-size: 72px; font-weight: 700; letter-spacing: 4px; text-anchor: middle; }
     .subtitle { font-size: 36px; font-weight: 400; text-anchor: middle; }
     .cell { fill: #fdfdfd; stroke: #000; stroke-width: 2; }

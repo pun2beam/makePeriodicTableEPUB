@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
+import subprocess
 import math
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,6 +15,24 @@ from typing import Any, Dict, Iterable, List, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from localization import get_localized_strings
+
+GENERIC_FONT_FAMILIES = {
+    "serif",
+    "sans-serif",
+    "monospace",
+    "cursive",
+    "fantasy",
+    "system-ui",
+}
+
+DEFAULT_SANS_FALLBACK = [
+    "Helvetica Neue",
+    "Helvetica",
+    "Arial",
+    "Noto Sans",
+    "DejaVu Sans",
+    "sans-serif",
+]
 
 LAYOUT_WIDTH = 2560
 LAYOUT_HEIGHT = 1600
@@ -118,7 +138,143 @@ def make_arc_path_d(
     )
 
 
-def render_svg(template_path: Path, cells: List[Cell], strings: Dict[str, str]) -> str:
+def _quote_font_family(name: str) -> str:
+    """Return a CSS-ready font-family token for ``name``."""
+
+    cleaned = name.strip()
+    if not cleaned:
+        return "sans-serif"
+    lower = cleaned.lower()
+    if lower in GENERIC_FONT_FAMILIES:
+        return lower
+    if (cleaned[0] in {'"', "'"}) and cleaned[-1] == cleaned[0]:
+        return cleaned
+    if any(ch in cleaned for ch in (" ", "-", ",", ".")):
+        return f"'{cleaned}'"
+    return cleaned
+
+
+def _fc_match(pattern: str) -> Optional[str]:
+    """Return the primary family name matched by ``fc-match`` for ``pattern``."""
+
+    try:
+        proc = subprocess.run(
+            ["fc-match", "--format=%{family}", pattern],
+            capture_output=True,
+            check=False,
+            text=True,
+        )
+    except FileNotFoundError:
+        return None
+    if proc.returncode != 0:
+        return None
+    result = proc.stdout.strip()
+    if not result:
+        return None
+    primary = result.split(",", 1)[0].strip()
+    return primary or None
+
+
+def _font_family_available(candidate: str, lang: Optional[str] = None) -> Optional[str]:
+    """Return the resolved family name if ``candidate`` is available."""
+
+    pattern = candidate
+    if lang:
+        pattern = f"{candidate}:lang={lang}"
+    matched = _fc_match(pattern)
+    if not matched:
+        return None
+    cand_norm = candidate.strip().strip("'\"").lower()
+    match_norm = matched.strip().strip("'\"").lower()
+    if not cand_norm:
+        return None
+    if cand_norm == match_norm:
+        return matched
+    if cand_norm in match_norm or match_norm in cand_norm:
+        return matched
+    return None
+
+
+def _select_japanese_font() -> Optional[str]:
+    """Pick a Japanese-capable font available on the host system."""
+
+    preferred = [
+        "Noto Sans CJK JP",
+        "Noto Sans JP",
+        "Yu Gothic Medium",
+        "Yu Gothic",
+        "YuGothic",
+        "Hiragino Sans",
+        "Hiragino Kaku Gothic ProN",
+        "Meiryo",
+        "MS PGothic",
+        "IPAexGothic",
+        "TakaoPGothic",
+    ]
+    for family in preferred:
+        resolved = _font_family_available(family, lang="ja")
+        if resolved:
+            return resolved
+    system = platform.system().lower()
+    os_fallbacks = {
+        "darwin": [
+            "Hiragino Sans",
+            "Hiragino Kaku Gothic ProN",
+            "Yu Gothic",
+        ],
+        "windows": [
+            "Yu Gothic UI",
+            "Yu Gothic",
+            "Meiryo",
+        ],
+    }
+    for family in os_fallbacks.get(system, []):
+        # When fontconfig isn't available we optimistically trust common system fonts.
+        return family
+    # Fall back to whatever fontconfig believes is the best Japanese sans-serif
+    fallback = _fc_match(":lang=ja")
+    return fallback
+
+
+def _build_font_stack(primary: Optional[str]) -> str:
+    """Return a CSS font-family stack with ``primary`` first."""
+
+    stack: List[str] = []
+    if primary:
+        stack.append(primary)
+    for family in DEFAULT_SANS_FALLBACK:
+        if not primary or family.strip().lower() != primary.strip().lower():
+            stack.append(family)
+    return ", ".join(_quote_font_family(name) for name in stack)
+
+
+def _language_primary_tag(language: Optional[str]) -> Optional[str]:
+    if not language:
+        return None
+    candidate = str(language).strip().lower()
+    if not candidate:
+        return None
+    return candidate.split("-", 1)[0]
+
+
+def _compute_font_families(language: Optional[str]) -> Dict[str, str]:
+    primary_tag = _language_primary_tag(language)
+    primary_font: Optional[str] = None
+    if primary_tag == "ja":
+        primary_font = _select_japanese_font()
+    stack = _build_font_stack(primary_font)
+    return {
+        "title_font_stack": stack,
+        "body_font_stack": stack,
+    }
+
+
+def render_svg(
+    template_path: Path,
+    cells: List[Cell],
+    strings: Dict[str, str],
+    language: Optional[str],
+) -> str:
     env = Environment(
         loader=FileSystemLoader(template_path.parent),
         autoescape=select_autoescape(enabled_extensions=("svg", "xml")),
@@ -138,6 +294,8 @@ def render_svg(template_path: Path, cells: List[Cell], strings: Dict[str, str]) 
     theta_start = -95.0
     theta_end = 140.0
 
+    font_families = _compute_font_families(language)
+
     return template.render(
         cells=[cell.__dict__ for cell in cells],
         cover_width=COVER_WIDTH,
@@ -154,6 +312,8 @@ def render_svg(template_path: Path, cells: List[Cell], strings: Dict[str, str]) 
         atom_y=cy,
         title_text=strings["cover_arc_title"],
         subtitle_text=strings["cover_arc_subtitle"],
+        title_font_stack=font_families["title_font_stack"],
+        body_font_stack=font_families["body_font_stack"],
     )
 
 
@@ -174,8 +334,9 @@ def main() -> int:
     data = json.loads(args.data.read_text(encoding="utf-8"))
     elements = data["elements"]
     cells = build_cells(elements)
-    strings = get_localized_strings(data.get("meta", {}).get("language"))
-    svg = render_svg(args.template, cells, strings)
+    language = data.get("meta", {}).get("language")
+    strings = get_localized_strings(language)
+    svg = render_svg(args.template, cells, strings, language)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(svg, encoding="utf-8")
     print(f"Wrote cover SVG to {args.out}")
