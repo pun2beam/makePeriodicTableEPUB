@@ -34,6 +34,12 @@ DEFAULT_SANS_FALLBACK = [
     "sans-serif",
 ]
 
+DEFAULT_SYMBOL_FONT_SIZE = 82
+_SYMBOL_FONT_SIZE_BY_LANGUAGE = {
+    "en": 78,
+    "ja": 82,
+}
+
 LAYOUT_WIDTH = 2560
 LAYOUT_HEIGHT = 1600
 COVER_WIDTH = 1600
@@ -284,6 +290,13 @@ def _compute_font_families(language: Optional[str]) -> Dict[str, str]:
     }
 
 
+def _compute_symbol_font_size(language: Optional[str]) -> int:
+    primary_tag = _language_primary_tag(language)
+    if primary_tag and primary_tag in _SYMBOL_FONT_SIZE_BY_LANGUAGE:
+        return _SYMBOL_FONT_SIZE_BY_LANGUAGE[primary_tag]
+    return DEFAULT_SYMBOL_FONT_SIZE
+
+
 def render_svg(
     template_path: Path,
     cells: List[Cell],
@@ -329,6 +342,7 @@ def render_svg(
         subtitle_text=strings["cover_arc_subtitle"],
         title_font_stack=font_families["title_font_stack"],
         body_font_stack=font_families["body_font_stack"],
+        symbol_font_size=_compute_symbol_font_size(language),
     )
 
 
